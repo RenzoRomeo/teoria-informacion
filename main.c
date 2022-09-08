@@ -45,14 +45,25 @@ int esMemoriaNula(double probabilidades[] ,double mat[][CANT_SIMBOLOS]) {
     return 1;
 }
 
+double calcularEntropia(double probabilidades[]) {
+    double entropia = 0;
+    for (int i = 0; i < CANT_SIMBOLOS; i++) {
+        double prob = probabilidades[i];
+        entropia += prob * (log(prob) / log(2.0));
+    }
+    return -entropia;
+}
+
 int main() {
-    double probabilidad[CANT_SIMBOLOS];
+    double probabilidades[CANT_SIMBOLOS];
     double mat[CANT_SIMBOLOS][CANT_SIMBOLOS] = {0};
-    leerArchivo("datos.txt", probabilidad, mat);
+
+    // Inciso A
+    leerArchivo("datos.txt", probabilidades, mat);
 
     printf("Probabilidades de cada simbolo: \n");
     for (int i = 0; i < CANT_SIMBOLOS; i++)
-        printf("%c: %f\n", i + 'A', probabilidad[i]);
+        printf("%c: %f\n", i + 'A', probabilidades[i]);
     printf("\n");
 
     printf("Matriz de transicion: \n");
@@ -64,5 +75,10 @@ int main() {
     }
     printf("\n");
 
-    printf("La fuente es de memoria nula: %s", esMemoriaNula(probabilidad, mat) ? "SI" : "NO");
+    printf("La fuente es de memoria nula: %s\n", esMemoriaNula(probabilidades, mat) ? "SI" : "NO");
+
+    // Inciso B
+    double entropia = calcularEntropia(probabilidades);
+    printf("Entropia (Fuente Original): %f bits\n", entropia);
+    printf("Entropia (Extension Orden 20): %f bits\n", entropia * 20);
 }
