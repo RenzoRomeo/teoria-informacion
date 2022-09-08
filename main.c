@@ -50,12 +50,19 @@ int main() {
     double mat[CANT_SIMBOLOS][CANT_SIMBOLOS] = {0};
     leerArchivo("datos.txt", probabilidad, mat);
 
+    printf("Probabilidades de cada simbolo: \n");
+    for (int i = 0; i < CANT_SIMBOLOS; i++)
+        printf("%c: %f\n", i + 'A', probabilidad[i]);
+    printf("\n");
+
+    printf("Matriz de transicion: \n");
     for (int i = 0; i < CANT_SIMBOLOS; i++) {
         for (int j = 0; j < CANT_SIMBOLOS; j++) {
-            printf("%f", mat[i][j]);
+            printf("%f ", mat[i][j]);
         }
         printf("\n");
     }
+    printf("\n");
 
     printf("La fuente es de memoria nula: %s", esMemoriaNula(probabilidad, mat) ? "SI" : "NO");
 }
