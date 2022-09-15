@@ -22,14 +22,22 @@ void leerArchivo(char* nombreArchivo, float probabilidad[], float mat[][CANT_SIM
         ant = sig;
     }
 
+    int sumas[3] = {0};
+    for(int i = 0; i < CANT_SIMBOLOS; i++) {
+        for (int j = 0; j < CANT_SIMBOLOS; j++) {
+            sumas[j] += mat[i][j];
+        }
+    }
+    
+
     for (int i = 0; i < CANT_SIMBOLOS; i++) {
-        probabilidad[i] /= (float)CANT_CARACTERES;
+       for (int j = 0; j < CANT_SIMBOLOS; j++) {
+           mat[i][j] /= (float)(sumas[j]);
+       }
     }
 
     for (int i = 0; i < CANT_SIMBOLOS; i++) {
-        for (int j = 0; j < CANT_SIMBOLOS; j++) {
-            mat[i][j] /= (float)(CANT_CARACTERES - 1);
-        }
+        probabilidad[i] /= (float)CANT_CARACTERES;
     }
 
     fclose(arch);
@@ -38,7 +46,7 @@ void leerArchivo(char* nombreArchivo, float probabilidad[], float mat[][CANT_SIM
 int esMemoriaNula(float probabilidades[], float mat[][CANT_SIMBOLOS]) {
     for (int i = 0; i < CANT_SIMBOLOS; i++) {
         for (int j = 0; j < CANT_SIMBOLOS; j++) {
-            if (fabs(mat[j][i] - probabilidades[i] * probabilidades[j]) > DIF)
+            if (fabs(mat[i][j] - probabilidades[i]) > DIF)
                 return 0;
         }
     }
@@ -81,4 +89,6 @@ int main() {
     float entropia = calcularEntropia(probabilidades);
     printf("Entropia (Fuente Original): %f bits\n", entropia);
     printf("Entropia (Extension Orden 20): %f bits\n", entropia * 20);
+
+    return 0;
 }
