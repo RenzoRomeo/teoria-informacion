@@ -110,17 +110,26 @@ void leerArchivo(char *nombreArchivo, float probabilidad[], float mat[][CANT_SIM
         ant = sig;
     }
 
+    int sumas[3] = {0};
     for (int i = 0; i < CANT_SIMBOLOS; i++)
     {
-        probabilidad[i] /= (float)CANT_CARACTERES;
+        for (int j = 0; j < CANT_SIMBOLOS; j++)
+        {
+            sumas[j] += mat[i][j];
+        }
     }
 
     for (int i = 0; i < CANT_SIMBOLOS; i++)
     {
         for (int j = 0; j < CANT_SIMBOLOS; j++)
         {
-            mat[i][j] /= (float)(CANT_CARACTERES - 1);
+            mat[i][j] /= (float)(sumas[j]);
         }
+    }
+
+    for (int i = 0; i < CANT_SIMBOLOS; i++)
+    {
+        probabilidad[i] /= (float)CANT_CARACTERES;
     }
 
     fclose(arch);
@@ -132,7 +141,7 @@ int esMemoriaNula(float probabilidades[], float mat[][CANT_SIMBOLOS])
     {
         for (int j = 0; j < CANT_SIMBOLOS; j++)
         {
-            if (fabs(mat[j][i] - probabilidades[i] * probabilidades[j]) > DIF)
+            if (fabs(mat[i][j] - probabilidades[i]) > DIF)
                 return 0;
         }
     }
