@@ -12,7 +12,7 @@ void leerArchivo(const char *nombreArchivo, float probabilidad[], float mat[][CA
 
 int esMemoriaNula(float probabilidades[], float mat[][CANT_SIMBOLOS]);
 
-float calcularEntropia(float probabilidades[]);
+double calcularEntropia(float probabilidades[]);
 
 int main()
 {
@@ -148,13 +148,13 @@ int esMemoriaNula(float probabilidades[], float mat[][CANT_SIMBOLOS])
     return 1;
 }
 
-float calcularEntropia(float probabilidades[])
+double calcularEntropia(float probabilidades[])
 {
-    float entropia = 0;
+    double entropia = 0;
     for (int i = 0; i < CANT_SIMBOLOS; i++)
     {
         float prob = probabilidades[i];
-        entropia += prob * (log(prob) / log(2.0));
+        entropia += prob * log2(prob);
     }
     return -entropia;
 }
