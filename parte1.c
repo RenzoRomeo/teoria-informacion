@@ -6,48 +6,16 @@
 #define CANT_CARACTERES 10000
 #define DIF 0.01
 
-double entropiaExtension(float probabilidades[], int orden);
+double entropiaExtension(double probabilidades[], int orden);
 
-void leerArchivo(const char *nombreArchivo, float probabilidad[], float mat[][CANT_SIMBOLOS]);
+void leerArchivo(const char *nombreArchivo, double probabilidad[], double mat[][CANT_SIMBOLOS]);
 
-int esMemoriaNula(float probabilidades[], float mat[][CANT_SIMBOLOS]);
+int esMemoriaNula(double probabilidades[], double mat[][CANT_SIMBOLOS]);
 
-double calcularEntropia(float probabilidades[]);
+double calcularEntropia(double probabilidades[]);
 
-int main()
-{
-    float probabilidades[CANT_SIMBOLOS];
-    float mat[CANT_SIMBOLOS][CANT_SIMBOLOS] = {0};
 
-    // Inciso A
-    leerArchivo("datos.txt", probabilidades, mat);
-
-    printf("Probabilidades de cada simbolo: \n");
-    for (int i = 0; i < CANT_SIMBOLOS; i++)
-        printf("%c: %f\n", i + 'A', probabilidades[i]);
-    printf("\n");
-
-    printf("Matriz de transicion: \n");
-    for (int i = 0; i < CANT_SIMBOLOS; i++)
-    {
-        for (int j = 0; j < CANT_SIMBOLOS; j++)
-        {
-            printf("%f ", mat[i][j]);
-        }
-        printf("\n");
-    }
-    printf("\n");
-
-    printf("La fuente es de memoria nula: %s\n\n", esMemoriaNula(probabilidades, mat) ? "SI" : "NO");
-
-    // Inciso B
-    float entropia = calcularEntropia(probabilidades);
-    printf("Entropia (Fuente Original): %f bits\n", entropia);
-    printf("Entropia (Extension Orden 20, n * H(S)): %f bits\n", entropia * 20);
-    printf("Entropia (Extension Orden 20, calculada por extension): %f bits\n", entropiaExtension(probabilidades, 20));
-}
-
-double entropiaExtension(float probabilidades[], int orden)
+double entropiaExtension(double probabilidades[], int orden)
 {
     char *extension = (char *)malloc(sizeof(char) * orden);
 
@@ -90,7 +58,7 @@ double entropiaExtension(float probabilidades[], int orden)
     return entropiaOrdenN;
 }
 
-void leerArchivo(const char *nombreArchivo, float probabilidad[], float mat[][CANT_SIMBOLOS])
+void leerArchivo(const char *nombreArchivo, double probabilidad[], double mat[][CANT_SIMBOLOS])
 {
     FILE *arch = fopen(nombreArchivo, "r");
     if (arch == NULL)
@@ -123,19 +91,19 @@ void leerArchivo(const char *nombreArchivo, float probabilidad[], float mat[][CA
     {
         for (int j = 0; j < CANT_SIMBOLOS; j++)
         {
-            mat[i][j] /= (float)(sumas[j]);
+            mat[i][j] /= (double)(sumas[j]);
         }
     }
 
     for (int i = 0; i < CANT_SIMBOLOS; i++)
     {
-        probabilidad[i] /= (float)CANT_CARACTERES;
+        probabilidad[i] /= (double)CANT_CARACTERES;
     }
 
     fclose(arch);
 }
 
-int esMemoriaNula(float probabilidades[], float mat[][CANT_SIMBOLOS])
+int esMemoriaNula(double probabilidades[], double mat[][CANT_SIMBOLOS])
 {
     for (int i = 0; i < CANT_SIMBOLOS; i++)
     {
@@ -148,12 +116,12 @@ int esMemoriaNula(float probabilidades[], float mat[][CANT_SIMBOLOS])
     return 1;
 }
 
-double calcularEntropia(float probabilidades[])
+double calcularEntropia(double probabilidades[])
 {
     double entropia = 0;
     for (int i = 0; i < CANT_SIMBOLOS; i++)
     {
-        float prob = probabilidades[i];
+        double prob = probabilidades[i];
         entropia += prob * log2(prob);
     }
     return -entropia;

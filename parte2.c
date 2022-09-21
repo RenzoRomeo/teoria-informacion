@@ -10,47 +10,51 @@ void calcularProbabilidades(const char *nombreArchivo, int tamanoPalabra,  doubl
 void indiceAPalabra(int indice, char *palabra, int tamanoPalabra);
 int palabraAIndice(char *palabra);
 double calcularInformacion(char *palabra,  double probabilidades[]);
-double calcularEntropia( double probabilidades[], int cantPalabras);
-void mostrarInformacion(double probabilidades[], int cantPalabras, int tamanoPalabra);
+double calcularEntropiaFuente( double probabilidades[], int cantPalabras);
+void mostrarInformacion(FILE *resultados, double probabilidades[], int cantPalabras, int tamanoPalabra);
 int cumpleKraft(int longitudes[], int cantidadPalabras);
 double calcularLongitudMedia(double probabilidades[],int longitudes[],int cantidadPalabras);
 int esCodigoCompacto(double probabilidades[], int longitudes[], int cantidadPalabras);
-void procesarCodigo(int longitudExtension);
+void procesarCodigo(FILE *resultados, int longitudExtension, double entropiaOriginal);
+double calcularRendimiento(double entropia, double longitudMedia);
+double calcularRedundancia(double entropia, double longitudMedia);
 
-int main()
-{
-    procesarCodigo(3);
-    procesarCodigo(5);
-    procesarCodigo(7);
-}
-
-void procesarCodigo(int longitudExtension) {
+void procesarCodigo(FILE *resultados, int longitudExtension, double entropiaOriginal) {
     int cantPalabras;
     double *probabilidadesLongitud;
     double entropia;
     int *longitudes;
     double longitudMedia;
 
-
+    fprintf(resultados, "Codigo de longitud %d \n", longitudExtension);
+    fprintf(resultados, "\n");
     cantPalabras = (int)pow(CANT_SIMBOLOS, longitudExtension);
     probabilidadesLongitud = (double *)calloc(cantPalabras, sizeof(double));
     calcularProbabilidades("datos.txt", longitudExtension, probabilidadesLongitud, cantPalabras);
-    // mostrarInformacion(probabilidadesLongitud, cantPalabras, longitudExtension);
-    entropia = calcularEntropia(probabilidadesLongitud, cantPalabras);
-    printf("Entropia: %f \n", entropia);
+    mostrarInformacion(resultados, probabilidadesLongitud, cantPalabras, longitudExtension);
+
+
+    fprintf(resultados, "Resultados para el codigo de longitud %d \n", longitudExtension);
+    fprintf(resultados, "\n");
+    entropia = calcularEntropiaFuente(probabilidadesLongitud, cantPalabras);
+    fprintf(resultados, "Entropia: %f \n", entropia);
 
     longitudes = (int *)malloc(sizeof(int)*cantPalabras);
     for(int i = 0; i < cantPalabras; i++)
     {
         longitudes[i] = longitudExtension;
     }
-    printf("Cumple inecuacion de Kraft y Macmillan para codigo de longitud %d: %s \n", longitudExtension, cumpleKraft(longitudes, cantPalabras) ? "SI" : "NO");
+    fprintf(resultados, "Cumple inecuacion de Kraft y Macmillan para codigo de longitud %d: %s \n", longitudExtension, cumpleKraft(longitudes, cantPalabras) ? "SI" : "NO");
     
     longitudMedia = calcularLongitudMedia(probabilidadesLongitud, longitudes, cantPalabras);
-    printf("Longitud media del codigo de longitud %d: %f \n", longitudExtension, longitudMedia);
+    fprintf(resultados, "Longitud media del codigo de longitud %d: %f \n", longitudExtension, longitudMedia);
     
-    printf("El codigo es compacto: %s \n", esCodigoCompacto(probabilidadesLongitud, longitudes, cantPalabras) ? "SI" : "NO");
+    fprintf(resultados, "El codigo es compacto: %s \n", esCodigoCompacto(probabilidadesLongitud, longitudes, cantPalabras) ? "SI" : "NO");
     
+    fprintf(resultados, "Rendimiento: %f \n", calcularRendimiento(entropiaOriginal, longitudMedia));
+    fprintf(resultados, "Redundancia: %f \n", calcularRedundancia(entropiaOriginal, longitudMedia));
+    fprintf(resultados, "\n");
+    fprintf(resultados, "\n");
     free(longitudes);
     free(probabilidadesLongitud);
 }
@@ -134,7 +138,7 @@ double calcularInformacion(char *palabra,  double probabilidades[])
 }
 
 // Calcula la entropía de una fuente.
-double calcularEntropia( double probabilidades[], int cantPalabras)
+double calcularEntropiaFuente(double probabilidades[], int cantPalabras)
 {
     double entropia = 0;
     for (int i = 0; i < cantPalabras; i++)
@@ -150,20 +154,20 @@ double calcularEntropia( double probabilidades[], int cantPalabras)
 }
 
 // Muestra la información y la probabilidad de cada palabra.
-void mostrarInformacion( double probabilidades[], int cantPalabras, int tamanoPalabra)
+void mostrarInformacion(FILE *resultados, double probabilidades[], int cantPalabras, int tamanoPalabra)
 {
-    printf("Palabra | Probabilidad | Informacion\n");
+    fprintf(resultados, "Palabra | Probabilidad | Informacion\n");
     char *palabra = (char *)malloc(sizeof(char) * (tamanoPalabra + 1));
     for (int i = 0; i < cantPalabras; i++)
     {
         if (probabilidades[i] > 0.0)
         {
             indiceAPalabra(i, palabra, tamanoPalabra);
-            printf("%s: %f (%f bits)\n", palabra, probabilidades[i], calcularInformacion(palabra, probabilidades));
+            fprintf(resultados, "%s: %f (%f bits)\n", palabra, probabilidades[i], calcularInformacion(palabra, probabilidades));
         }
     }
     free(palabra);
-    printf("\n");
+    fprintf(resultados, "\n");
 }
 
 int cumpleKraft(int longitudes[], int cantidadPalabras)
@@ -203,4 +207,15 @@ int esCodigoCompacto(double probabilidades[], int longitudes[], int cantidadPala
     }
 
     return 1;
+}
+
+
+double calcularRendimiento(double entropiaFuente, double longitudMedia)
+{
+    return entropiaFuente / longitudMedia;
+}
+
+double calcularRedundancia(double entropiaFuente, double longitudMedia)
+{
+    return (longitudMedia - entropiaFuente) / longitudMedia;
 }
