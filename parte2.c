@@ -6,6 +6,12 @@
 #define CANT_SIMBOLOS 3
 #define DIF 0.01
 
+typedef struct
+{
+    double probabilidad;
+    char *palabra;
+} Codigo;
+
 void calcularProbabilidades(const char *nombreArchivo, int tamanoPalabra,  double probabilidades[], int cantPalabras);
 void indiceAPalabra(int indice, char *palabra, int tamanoPalabra);
 int palabraAIndice(char *palabra);
@@ -18,6 +24,8 @@ int esCodigoCompacto(double probabilidades[], int longitudes[], int cantidadPala
 void procesarCodigo(FILE *resultados, int longitudExtension, double entropiaOriginal);
 double calcularRendimiento(double entropia, double longitudMedia);
 double calcularRedundancia(double entropia, double longitudMedia);
+void huffman(Codigo probabilidades[], int cantidad, char *codigoHuffman[]);
+void compararCodigos(const void *a, const void *b)
 
 void procesarCodigo(FILE *resultados, int longitudExtension, double entropiaOriginal) {
     int cantPalabras;
@@ -32,7 +40,6 @@ void procesarCodigo(FILE *resultados, int longitudExtension, double entropiaOrig
     probabilidadesLongitud = (double *)calloc(cantPalabras, sizeof(double));
     calcularProbabilidades("datos.txt", longitudExtension, probabilidadesLongitud, cantPalabras);
     mostrarInformacion(resultados, probabilidadesLongitud, cantPalabras, longitudExtension);
-
 
     fprintf(resultados, "Resultados para el codigo de longitud %d \n", longitudExtension);
     fprintf(resultados, "\n");
@@ -57,6 +64,30 @@ void procesarCodigo(FILE *resultados, int longitudExtension, double entropiaOrig
     fprintf(resultados, "\n");
     free(longitudes);
     free(probabilidadesLongitud);
+
+    // Armar vector de codigos (probabilidad y palabra)
+    Codigo *codigos = (Codigo*)malloc(sizeof(Codigo) * cantPalabras);
+    for (int i = 0; i < cantPalabras; i++)
+    {
+        codigos[i].probabilidad = probabilidades[i];
+        codigos[i].palabra = (char*)malloc(sizeof(char) * (longitudExtension + 1));
+        indiceAPalabra(i, codigos[i].palabra, longitudExtension);
+    }
+
+    qsort(codigos, cantPalabras, sizeof(Codigo), compararCodigos);
+
+    char *codigoHuffman[] = (char**)malloc(sizeof(char*) * cantPalabras);
+
+    huffman(codigos, cantidadPalabras, codigoHuffman);
+
+    fprintf(resultados, "Codigo Huffman\n\nPalabra | Codigo\n");
+    for (int i = 0; i < cantPalabras; i++)
+    {
+        fprintf(resultados, "%s -> %s\n", codigos[i].palabra, codigoHuffman[i]);
+    }
+    fprintf(resultados, "\n\n");
+
+    // ¡Escribir los Frees!
 }
 
 // Calcula el índice de la palabra.
@@ -181,8 +212,6 @@ int cumpleKraft(int longitudes[], int cantidadPalabras)
     return kraft <= 1.0 + DIF;
 }
 
-
-
 double calcularLongitudMedia( double probabilidades[],int longitudes[],int cantidadPalabras)
 {
     double longitudMedia = 0.0;
@@ -209,7 +238,6 @@ int esCodigoCompacto(double probabilidades[], int longitudes[], int cantidadPala
     return 1;
 }
 
-
 double calcularRendimiento(double entropiaFuente, double longitudMedia)
 {
     return entropiaFuente / longitudMedia;
@@ -218,4 +246,44 @@ double calcularRendimiento(double entropiaFuente, double longitudMedia)
 double calcularRedundancia(double entropiaFuente, double longitudMedia)
 {
     return (longitudMedia - entropiaFuente) / longitudMedia;
+}
+
+// Pre: Las probabilidades están ordenadas descendentemente
+void huffman(Codigo probabilidades[], int cantidad, char *codigoHuffman[])
+{
+    if (cantidad == 2)
+    {
+        char *palabra1 = (char *)malloc(sizeof(char) * 2);
+        char *palabra2 = (char *)malloc(sizeof(char) * 2);
+        sprintf("%s", palabra1, "0");
+        sprintf("%s", palabra2, "1");
+        codigoHuffman[0] = palabra1;
+        codigoHuffman[1] = palabra2;
+    }
+    else
+    {
+        double ultimaProbabilidad = probabilidades[cantidad - 1].probabilidad;
+        probabilidades[cantidad - 2].probabilidad += ultimaProbabilidad;
+        huffman(probabilidades, cantidad - 1, codigoHuffman);
+        probabilidades[cantidad - 2].probabilidad -= ultimaProbabilidad;
+
+        char *palabra1 = (char *)malloc(sizeof(char) * (strlen(codigoHuffman[cantidad - 2]) + 1));
+        char *palabra2 = (char *)malloc(sizeof(char) * (strlen(codigoHuffman[cantidad - 1]) + 1));
+
+        sprintf("%s%s", palabra1, codigoHuffman[cantidad - 2], "0");
+        sprintf("%s%s", palabra2, codigoHuffman[cantidad - 1], "1");
+
+        free(codigoHuffman[cantidad - 2]);
+        free(codigoHuffman[cantidad - 1]);
+
+        codigoHuffman[cantidad - 2] = palabra1;
+        codigoHuffman[cantidad - 1] = palabra2;
+    }
+}
+
+void compararCodigos(const void *a, const void *b)
+{
+    double probabilidadA = ((Codigo*)a)->probabilidad;
+    double probabilidadB = ((Codigo*)b)->probabilidad;
+    return probabilidadA - probabilidadB;
 }
