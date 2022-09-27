@@ -36,6 +36,7 @@ int main() {
     double entropia = calcularEntropia(probabilidades);
     fprintf(resultados, "Entropia (Fuente Original): %f bits\n", entropia);
     fprintf(resultados, "Entropia (Extension Orden 20, n * H(S)): %f bits\n", entropia * 20);
+    entropiaExtension(probabilidades, 5);
     // fprintf(resultados, "Entropia (Extension Orden 20, calculada por extension): %f bits\n", entropiaExtension(probabilidades, 20));
     fprintf(resultados, "\n");
 
