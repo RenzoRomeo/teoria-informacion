@@ -25,13 +25,7 @@ double entropiaExtension(double probabilidades[], int orden)
 
     // Para cada extension
     for (unsigned int i = 0; i < cantCiclos; i++)
-    {
-        for (int i = 0; i < orden; i++)
-        {
-            printf("%c", 'A' + extension[i]);
-        }
-        printf("\n");
-        
+    {        
         double probabilidadExtension = 1.0;
         for (int j = 0; j < orden; j++)
         {
@@ -46,25 +40,10 @@ double entropiaExtension(double probabilidades[], int orden)
             extension[j] = 0;
             j++;
         }
-        extension[j]++;
-
-        // Incremento de la extension
-        //for (int j = 0; j < orden; j++)
-        //{
-        //    if (extension[j] < CANT_SIMBOLOS - 1)
-        //    {
-        //        extension[j]++;
-        //        break;
-        //    }
-        //    else
-        //    {
-        //        extension[j] = 0;
-        //    }
-        //}
-
-
-
-        
+        if(j < orden)
+        {
+            extension[j]++;
+        }
     }
 
     free(extension);
