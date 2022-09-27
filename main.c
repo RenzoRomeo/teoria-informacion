@@ -49,5 +49,7 @@ int main() {
     procesarCodigo(resultados, 7, entropia);
     
     fclose(resultados);
+    printf("Programa ejecutado con exito \n");
+    printf("Resultados guardados en 'resultados.txt' \n");
     return 0;
 }
