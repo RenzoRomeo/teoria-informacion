@@ -14,15 +14,10 @@ int esMemoriaNula(double probabilidades[], double mat[][CANT_SIMBOLOS]);
 
 double calcularEntropia(double probabilidades[]);
 
-
 double entropiaExtension(double probabilidades[], int orden)
 {
-    char *extension = (char *)malloc(sizeof(char) * orden);
-
-    for (int i = 0; i < orden; i++)
-    {
-        extension[i] = 0;
-    }
+    // Calloc es equivalente a malloc, pero inicializa en 0 el vector.
+    char *extension = (char *)calloc(orden, sizeof(char));
 
     unsigned int cantCiclos = (unsigned int)pow(CANT_SIMBOLOS, orden);
 
@@ -31,6 +26,12 @@ double entropiaExtension(double probabilidades[], int orden)
     // Para cada extension
     for (unsigned int i = 0; i < cantCiclos; i++)
     {
+        for (int i = 0; i < orden; i++)
+        {
+            printf("%c", 'A' + extension[i]);
+        }
+        printf("\n");
+        
         double probabilidadExtension = 1.0;
         for (int j = 0; j < orden; j++)
         {
@@ -38,19 +39,28 @@ double entropiaExtension(double probabilidades[], int orden)
         }
         entropiaOrdenN += probabilidadExtension * (-log2(probabilidadExtension));
 
-        // Incremento de la extension
-        for (int j = 0; j < orden; j++)
+        // Incrementar extension
+        int j = 0;
+        while (j < orden && !(extension[j] < CANT_SIMBOLOS - 1))
         {
-            if (extension[j] < CANT_SIMBOLOS - 1)
-            {
-                extension[j]++;
-                break;
-            }
-            else
-            {
-                extension[j] = 0;
-            }
+            extension[j] = 0;
+            j++;
         }
+        extension[j]++;
+
+        // Incremento de la extension
+        //for (int j = 0; j < orden; j++)
+        //{
+        //    if (extension[j] < CANT_SIMBOLOS - 1)
+        //    {
+        //        extension[j]++;
+        //        break;
+        //    }
+        //    else
+        //    {
+        //        extension[j] = 0;
+        //    }
+        //}
     }
 
     free(extension);
