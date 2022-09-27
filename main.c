@@ -1,8 +1,17 @@
 #include "parte1.c"
 #include "parte2.c"
 
-int main() {
+int main(int argc, char *argv[]) {
     FILE *resultados = fopen("resultados.txt", "w");
+
+    int calcularEntropiaOrden20 = 0;
+    
+    // Buscar flag -o
+    for (int i = 1; i < argc; i++) {
+        if (strcmp(argv[i], "-o") == 0) {
+            calcularEntropiaOrden20 = 1;
+        }
+    }
 
     // PARTE 1
     fprintf(resultados, "---Parte 1--- \n");
@@ -36,8 +45,12 @@ int main() {
     double entropia = calcularEntropia(probabilidades);
     fprintf(resultados, "Entropia (Fuente Original): %f bits\n", entropia);
     fprintf(resultados, "Entropia (Extension Orden 20, n * H(S)): %f bits\n", entropia * 20);
-    entropiaExtension(probabilidades, 5);
-    // fprintf(resultados, "Entropia (Extension Orden 20, calculada por extension): %f bits\n", entropiaExtension(probabilidades, 20));
+    
+    if(calcularEntropiaOrden20)
+    {
+        fprintf(resultados, "Entropia (Extension Orden 20, calculada por extension): %f bits\n", entropiaExtension(probabilidades, 20));
+    }
+    
     fprintf(resultados, "\n");
 
     
