@@ -61,6 +61,10 @@ double entropiaExtension(double probabilidades[], int orden)
         //        extension[j] = 0;
         //    }
         //}
+
+
+
+        
     }
 
     free(extension);
