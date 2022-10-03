@@ -12,7 +12,7 @@ typedef struct
     char *palabra;
 } Codigo;
 
-void calcularProbabilidades(const char *nombreArchivo, int tamanoPalabra,  double probabilidades[], int cantPalabras);
+void calcularProbabilidades(const char *nombreArchivo, int tamanoPalabra,  Codigo codigos[], int cantPalabras);
 void indiceAPalabra(int indice, char *palabra, int tamanoPalabra);
 int palabraAIndice(char *palabra);
 double calcularInformacion(char *palabra,  double probabilidades[]);
@@ -28,18 +28,31 @@ void huffman(Codigo probabilidades[], int cantidad, char *codigoHuffman[]);
 int compararCodigos(const void *a, const void *b);
 
 void procesarCodigo(FILE *resultados, int longitudExtension, double entropiaOriginal) {
+    // Cantidad de palabras del codigo
     int cantPalabras;
-    double *probabilidades;
+    // Almacena la palabra codigo junto con su probabilidad
+    Codigo *codigos;
     double entropia;
+    // Almacena la longitud de cada palabra codigo
     int *longitudes;
     double longitudMedia;
 
     fprintf(resultados, "Codigo de longitud %d \n", longitudExtension);
     fprintf(resultados, "\n");
+
     cantPalabras = (int)pow(CANT_SIMBOLOS, longitudExtension);
-    probabilidades = (double *)calloc(cantPalabras, sizeof(double));
-    calcularProbabilidades("datos.txt", longitudExtension, probabilidades, cantPalabras);
-    mostrarInformacion(resultados, probabilidades, cantPalabras, longitudExtension);
+
+    // Armar vector de codigos (probabilidad y palabra)
+    codigos = (Codigo*)malloc(sizeof(Codigo) * cantPalabras);
+    for (int i = 0; i < cantPalabras; i++)
+    {
+        codigos[i].probabilidad = 0;
+        codigos[i].palabra = (char*)malloc(sizeof(char) * (longitudExtension + 1));
+        indiceAPalabra(i, codigos[i].palabra, longitudExtension);
+    }
+    
+    calcularProbabilidades("datos.txt", longitudExtension, codigos, cantPalabras);
+    mostrarInformacion(resultados, codigos, cantPalabras, longitudExtension);
 
     fprintf(resultados, "Resultados para el codigo de longitud %d \n", longitudExtension);
     fprintf(resultados, "\n");
@@ -63,14 +76,6 @@ void procesarCodigo(FILE *resultados, int longitudExtension, double entropiaOrig
     fprintf(resultados, "\n");
     fprintf(resultados, "\n");
 
-    // Armar vector de codigos (probabilidad y palabra)
-    Codigo *codigos = (Codigo*)malloc(sizeof(Codigo) * cantPalabras);
-    for (int i = 0; i < cantPalabras; i++)
-    {
-        codigos[i].probabilidad = probabilidades[i];
-        codigos[i].palabra = (char*)malloc(sizeof(char) * (longitudExtension + 1));
-        indiceAPalabra(i, codigos[i].palabra, longitudExtension);
-    }
 
     qsort(codigos, cantPalabras, sizeof(Codigo), compararCodigos);
 
@@ -131,7 +136,7 @@ void indiceAPalabra(int indice, char *palabra, int tamanoPalabra)
 // Itera sobre el archivo y cuenta la cantidad de veces que aparece cada palabra.
 // Luego calcula la probabilidad de cada palabra dividiendo la cantidad de veces que aparece
 // por la cantidad total de palabras.
-void calcularProbabilidades(const char *nombreArchivo, int tamanoPalabra,  double probabilidades[], int cantPalabras)
+void calcularProbabilidades(const char *nombreArchivo, int tamanoPalabra,  Codigo codigos[], int cantPalabras)
 {
     FILE *archivo = fopen(nombreArchivo, "r");
     if (archivo == NULL)
@@ -140,7 +145,12 @@ void calcularProbabilidades(const char *nombreArchivo, int tamanoPalabra,  doubl
         exit(1);
     }
 
+    // Cuenta la cantidad de caracteres de la palabra. 
+    // Si es igual al tamaño de la palabra, se suma 1 a la cantidad de veces que aparece la palabra.
     int cont = 0;
+
+    // Acumula la cantidad de palabras que aparecen en el archivo.
+    int apariciones = 0;
     char *palabra = malloc(sizeof(char) * (tamanoPalabra + 1));
 
     while (!feof(archivo))
@@ -153,21 +163,17 @@ void calcularProbabilidades(const char *nombreArchivo, int tamanoPalabra,  doubl
             palabra[cont] = '\0';
             cont = 0;
             int indice = palabraAIndice(palabra);
-            probabilidades[indice]++;
+            codigos[indice].probabilidad++;
+            apariciones++;
         }
     }
+
     free(palabra);
     fclose(archivo);
 
-    int suma = 0;
     for (int i = 0; i < cantPalabras; i++)
     {
-        suma += probabilidades[i];
-    }
-
-    for (int i = 0; i < cantPalabras; i++)
-    {
-        probabilidades[i] /= suma;
+        codigos[i].probabilidad /= apariciones;
     }
 }
 
