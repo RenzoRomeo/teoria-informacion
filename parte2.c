@@ -20,7 +20,7 @@ double calcularEntropiaFuente(Codigo codigos[], int cantPalabras);
 void mostrarInformacion(FILE *resultados, Codigo codigos[], int cantPalabras, int tamanoPalabra);
 int cumpleKraft(int longitudes[], int cantidadPalabras);
 double calcularLongitudMedia(Codigo codigos[], int longitudes[], int cantPalabras);
-int esCodigoCompacto(double probabilidades[], int longitudes[], int cantidadPalabras);
+int esCodigoCompacto(Codigo codigos[], int longitudes[], int cantidadPalabras);
 void procesarCodigo(FILE *resultados, int longitudExtension, double entropiaOriginal);
 double calcularRendimiento(double entropia, double longitudMedia);
 double calcularRedundancia(double entropia, double longitudMedia);
@@ -69,7 +69,7 @@ void procesarCodigo(FILE *resultados, int longitudExtension, double entropiaOrig
     longitudMedia = calcularLongitudMedia(codigos, longitudes, cantPalabras);
     fprintf(resultados, "Longitud media del codigo de longitud %d: %f \n", longitudExtension, longitudMedia);
     
-    fprintf(resultados, "El codigo es compacto: %s \n", esCodigoCompacto(probabilidades, longitudes, cantPalabras) ? "SI" : "NO");
+    fprintf(resultados, "El codigo es compacto: %s \n", esCodigoCompacto(codigos, longitudes, cantPalabras) ? "SI" : "NO");
     
     fprintf(resultados, "Rendimiento: %f \n", calcularRendimiento(entropiaOriginal, longitudMedia));
     fprintf(resultados, "Redundancia: %f \n", calcularRedundancia(entropiaOriginal, longitudMedia));
@@ -247,11 +247,11 @@ double calcularLongitudMedia(Codigo codigos[], int longitudes[], int cantPalabra
 
 
 // Verifica si el codigo es compacto.
-int esCodigoCompacto(double probabilidades[], int longitudes[], int cantidadPalabras)
+int esCodigoCompacto(Codigo codigos[], int longitudes[], int cantidadPalabras)
 {
     for(int i = 0; i < cantidadPalabras; i++)
     {
-        if(fabs(probabilidades[i] - pow(CANT_SIMBOLOS, (-longitudes[i]))) > 0.001)
+        if(fabs(codigos[i].probabilidad - pow(CANT_SIMBOLOS, (-longitudes[i]))) > 0.001)
         {
             return 0;
         }
