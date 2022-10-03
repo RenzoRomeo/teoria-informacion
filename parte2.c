@@ -346,7 +346,7 @@ void regenerarArchivo(const char *nombreArchivo, const char *nombreArchivoCodifi
                     cantBit = 0;
                 }
 
-                if (topeBuffer == 255)
+                if (topeBuffer == 256)
                 {
                     fwrite(buffer, sizeof(char), 256, regenerado);
                     topeBuffer = 0;
@@ -358,8 +358,10 @@ void regenerarArchivo(const char *nombreArchivo, const char *nombreArchivoCodifi
     if (cantBit != 0)
     {
         byte = byte << (8 - cantBit);
-        fputc(byte, regenerado);
+        buffer[topeBuffer++] = byte;
     }
+
+    fwrite(buffer, sizeof(char), topeBuffer, regenerado);
 
     free(palabra);
     fclose(regenerado);
