@@ -19,7 +19,7 @@ double calcularInformacion(double probabilidad);
 double calcularEntropiaFuente(Codigo codigos[], int cantPalabras);
 void mostrarInformacion(FILE *resultados, Codigo codigos[], int cantPalabras, int tamanoPalabra);
 int cumpleKraft(int longitudes[], int cantidadPalabras);
-double calcularLongitudMedia(double probabilidades[],int longitudes[],int cantidadPalabras);
+double calcularLongitudMedia(Codigo codigos[], int longitudes[], int cantPalabras);
 int esCodigoCompacto(double probabilidades[], int longitudes[], int cantidadPalabras);
 void procesarCodigo(FILE *resultados, int longitudExtension, double entropiaOriginal);
 double calcularRendimiento(double entropia, double longitudMedia);
@@ -56,7 +56,7 @@ void procesarCodigo(FILE *resultados, int longitudExtension, double entropiaOrig
 
     fprintf(resultados, "Resultados para el codigo de longitud %d \n", longitudExtension);
     fprintf(resultados, "\n");
-    entropia = calcularEntropiaFuente(probabilidades, cantPalabras);
+    entropia = calcularEntropiaFuente(codigos, cantPalabras);
     fprintf(resultados, "Entropia: %f \n", entropia);
 
     longitudes = (int *)malloc(sizeof(int)*cantPalabras);
@@ -66,7 +66,7 @@ void procesarCodigo(FILE *resultados, int longitudExtension, double entropiaOrig
     }
     fprintf(resultados, "Cumple inecuacion de Kraft y Macmillan para codigo de longitud %d: %s \n", longitudExtension, cumpleKraft(longitudes, cantPalabras) ? "SI" : "NO");
     
-    longitudMedia = calcularLongitudMedia(probabilidades, longitudes, cantPalabras);
+    longitudMedia = calcularLongitudMedia(codigos, longitudes, cantPalabras);
     fprintf(resultados, "Longitud media del codigo de longitud %d: %f \n", longitudExtension, longitudMedia);
     
     fprintf(resultados, "El codigo es compacto: %s \n", esCodigoCompacto(probabilidades, longitudes, cantPalabras) ? "SI" : "NO");
@@ -223,10 +223,10 @@ void mostrarInformacion(FILE *resultados, Codigo codigos[], int cantPalabras, in
     fprintf(resultados, "\n");
 }
 
-int cumpleKraft(int longitudes[], int cantidadPalabras)
+int cumpleKraft(int longitudes[], int cantPalabras)
 {
     double kraft = 0.0;
-    for(int i = 0; i < cantidadPalabras; i++)
+    for(int i = 0; i < cantPalabras; i++)
     {
         kraft += pow(CANT_SIMBOLOS, (-longitudes[i])); 
     }
@@ -234,12 +234,12 @@ int cumpleKraft(int longitudes[], int cantidadPalabras)
     return kraft <= 1.0 + DIF;
 }
 
-double calcularLongitudMedia( double probabilidades[],int longitudes[],int cantidadPalabras)
+double calcularLongitudMedia(Codigo codigos[], int longitudes[], int cantPalabras)
 {
     double longitudMedia = 0.0;
-    for (int i = 0; i < cantidadPalabras; i++)
+    for (int i = 0; i < cantPalabras; i++)
     {
-        longitudMedia += probabilidades[i] * longitudes[i];
+        longitudMedia += codigos[i].probabilidad * longitudes[i];
     }
 
     return longitudMedia;
