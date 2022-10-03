@@ -25,6 +25,7 @@ void procesarCodigo(FILE *resultados, int longitudExtension, double entropiaOrig
 double calcularRendimiento(double entropia, double longitudMedia);
 double calcularRedundancia(double entropia, double longitudMedia);
 void huffman(Codigo probabilidades[], int cantidad, char *codigoHuffman[]);
+void regenerarArchivo(const char *nombreArchivo, const char *nombreArchivoCodificado,Codigo codigos[], int cantPalabras, int tamanoPalabra, char *codigoHuffman[]);
 int compararCodigos(const void *a, const void *b);
 
 void procesarCodigo(FILE *resultados, int longitudExtension, double entropiaOriginal) {
@@ -76,23 +77,29 @@ void procesarCodigo(FILE *resultados, int longitudExtension, double entropiaOrig
     fprintf(resultados, "\n");
     fprintf(resultados, "\n");
 
-
+    // Ordenar codigos por probabilidad para Huffman
     qsort(codigos, cantPalabras, sizeof(Codigo), compararCodigos);
 
     char **codigoHuffman = (char**)malloc(sizeof(char*) * cantPalabras);
 
     huffman(codigos, cantPalabras, codigoHuffman);
 
-    fprintf(resultados, "Codigo Huffman\n\nPalabra | Codigo\n");
+    fprintf(resultados, "Codigo Huffman\n\n");
+    fprintf(resultados, "\n");
+    
+    fprintf(resultados, "Palabra | Codigo\n");
     for (int i = 0; i < cantPalabras; i++)
     {
         fprintf(resultados, "%s -> %s\n", codigos[i].palabra, codigoHuffman[i]);
     }
     fprintf(resultados, "\n\n");
 
+    char *nombreArchivoCodificado = (char*)malloc(sizeof(char) * 30);    
+    sprintf(nombreArchivoCodificado, "datosCodificadosLongitud%d.dat", longitudExtension);
+
+    regenerarArchivo("datos.txt", nombreArchivoCodificado, codigos, cantPalabras, longitudExtension, codigoHuffman);
 
     free(longitudes);
-    free(probabilidades);
 
     for (int i = 0; i < cantPalabras; i++)
     {
@@ -301,6 +308,57 @@ void huffman(Codigo probabilidades[], int cantidad, char *codigoHuffman[])
         codigoHuffman[cantidad - 1] = palabra2;
     }
 }
+
+
+void regenerarArchivo(const char *nombreArchivo, const char *nombreArchivoCodificado,Codigo codigos[], int cantPalabras, int tamanoPalabra, char *codigoHuffman[])
+{
+    FILE *archivo = fopen(nombreArchivo, "r");
+    FILE *regenerado = fopen(nombreArchivoCodificado, "wb");
+    char *palabra = malloc(sizeof(char) * (tamanoPalabra + 1));
+    int cont = 0;
+
+    char byte = 0;
+    int cantBit = 0;
+    while (!feof(archivo))
+    {
+        palabra[cont] = fgetc(archivo);
+        cont++;
+
+        if (cont == tamanoPalabra)
+        {
+            palabra[cont] = '\0';
+            cont = 0;
+            int indice = palabraAIndice(codigos, cantPalabras, palabra);
+            // fprintf(regenerado, "%s", codigoHuffman[indice]);
+            // Poner palabras en bytes
+            char *palabraCodificada = codigoHuffman[indice];
+            int longitudPalabra = strlen(palabraCodificada);
+            for (int i = 0; i < longitudPalabra; i++)
+            {
+                byte = byte << 1;
+                byte += palabraCodificada[i] - '0';
+                cantBit++;
+                if (cantBit == 8)
+                {
+                    fputc(byte, regenerado);
+                    byte = 0;
+                    cantBit = 0;
+                }
+            }
+        }
+    }
+
+    if (cantBit != 0)
+    {
+        byte = byte << (8 - cantBit);
+        fputc(byte, regenerado);
+    }
+
+    free(palabra);
+    fclose(regenerado);
+    fclose(archivo);
+}
+
 
 int compararCodigos(const void *a, const void *b)
 {
