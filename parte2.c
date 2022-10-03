@@ -16,7 +16,7 @@ void calcularProbabilidades(const char *nombreArchivo, int tamanoPalabra,  Codig
 void indiceAPalabra(int indice, char *palabra, int tamanoPalabra);
 int palabraAIndice(Codigo codigos[], int cantPalabras, char *palabra);
 double calcularInformacion(double probabilidad);
-double calcularEntropiaFuente( double probabilidades[], int cantPalabras);
+double calcularEntropiaFuente(Codigo codigos[], int cantPalabras);
 void mostrarInformacion(FILE *resultados, Codigo codigos[], int cantPalabras, int tamanoPalabra);
 int cumpleKraft(int longitudes[], int cantidadPalabras);
 double calcularLongitudMedia(double probabilidades[],int longitudes[],int cantidadPalabras);
@@ -193,17 +193,14 @@ double calcularInformacion(double probabilidad)
 }
 
 // Calcula la entropía de una fuente.
-double calcularEntropiaFuente(double probabilidades[], int cantPalabras)
+double calcularEntropiaFuente(Codigo codigos[], int cantPalabras)
 {
     double entropia = 0;
     for (int i = 0; i < cantPalabras; i++)
     {
-        double informacion = 0.0;
-        if (probabilidades[i] != 0.0)
-        {
-            informacion = -log2(probabilidades[i]);
-        }
-        entropia += probabilidades[i] * informacion;
+        Codigo codigo = codigos[i];
+        double informacion = calcularInformacion(codigo.probabilidad);
+        entropia += codigo.probabilidad * informacion;
     }
     return entropia;
 }
