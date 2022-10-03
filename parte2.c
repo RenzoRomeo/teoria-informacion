@@ -14,10 +14,10 @@ typedef struct
 
 void calcularProbabilidades(const char *nombreArchivo, int tamanoPalabra,  Codigo codigos[], int cantPalabras);
 void indiceAPalabra(int indice, char *palabra, int tamanoPalabra);
-int palabraAIndice(char *palabra);
-double calcularInformacion(char *palabra,  double probabilidades[]);
+int palabraAIndice(Codigo codigos[], int cantPalabras, char *palabra);
+double calcularInformacion(double probabilidad);
 double calcularEntropiaFuente( double probabilidades[], int cantPalabras);
-void mostrarInformacion(FILE *resultados, double probabilidades[], int cantPalabras, int tamanoPalabra);
+void mostrarInformacion(FILE *resultados, Codigo codigos[], int cantPalabras, int tamanoPalabra);
 int cumpleKraft(int longitudes[], int cantidadPalabras);
 double calcularLongitudMedia(double probabilidades[],int longitudes[],int cantidadPalabras);
 int esCodigoCompacto(double probabilidades[], int longitudes[], int cantidadPalabras);
@@ -106,17 +106,19 @@ void procesarCodigo(FILE *resultados, int longitudExtension, double entropiaOrig
     free(codigoHuffman);
 }
 
-// Calcula el índice de la palabra.
-int palabraAIndice(char *palabra)
+// Busca la palabra dentro de los codigos.
+int palabraAIndice(Codigo codigos[], int cantPalabras, char *palabra)
 {
-    int indice = 0;
-    int tamanoPalabra = strlen(palabra);
-    for (int i = 0; i < tamanoPalabra; i++)
+    for (int i = 0; i < cantPalabras; i++)
     {
-        indice += (palabra[i] - 'A') * (int)pow(CANT_SIMBOLOS, tamanoPalabra - i - 1);
+        if (strcmp(codigos[i].palabra, palabra) == 0)
+        {
+            return i;
+        }
     }
-    return indice;
+    return -1;
 }
+
 
 // Obtiene la palabra en base al índice.
 void indiceAPalabra(int indice, char *palabra, int tamanoPalabra)
@@ -162,7 +164,7 @@ void calcularProbabilidades(const char *nombreArchivo, int tamanoPalabra,  Codig
         {
             palabra[cont] = '\0';
             cont = 0;
-            int indice = palabraAIndice(palabra);
+            int indice = palabraAIndice(codigos, cantPalabras, palabra);
             codigos[indice].probabilidad++;
             apariciones++;
         }
@@ -177,15 +179,14 @@ void calcularProbabilidades(const char *nombreArchivo, int tamanoPalabra,  Codig
     }
 }
 
-// Calcula la información de una palabra.
-double calcularInformacion(char *palabra,  double probabilidades[])
+// Calcula la información en base a una probabilidad.
+double calcularInformacion(double probabilidad)
 {
-    int indice = palabraAIndice(palabra);
     double informacion = 0.0;
     
-    if (probabilidades[indice] > 0.0)
+    if (probabilidad > 0.0)
     {
-        informacion = -log2(probabilidades[indice]);
+        informacion = -log2(probabilidad);
     }
 
     return informacion;
@@ -208,19 +209,19 @@ double calcularEntropiaFuente(double probabilidades[], int cantPalabras)
 }
 
 // Muestra la información y la probabilidad de cada palabra.
-void mostrarInformacion(FILE *resultados, double probabilidades[], int cantPalabras, int tamanoPalabra)
+void mostrarInformacion(FILE *resultados, Codigo codigos[], int cantPalabras, int tamanoPalabra)
 {
     fprintf(resultados, "Palabra | Probabilidad | Informacion\n");
-    char *palabra = (char *)malloc(sizeof(char) * (tamanoPalabra + 1));
+
     for (int i = 0; i < cantPalabras; i++)
     {
-        if (probabilidades[i] > 0.0)
+        Codigo codigo = codigos[i];
+        if (codigo.probabilidad > 0.0)
         {
-            indiceAPalabra(i, palabra, tamanoPalabra);
-            fprintf(resultados, "%s: %f (%f bits)\n", palabra, probabilidades[i], calcularInformacion(palabra, probabilidades));
+            fprintf(resultados, "%s: %f (%f bits)\n", codigo.palabra, codigo.probabilidad, calcularInformacion(codigo.probabilidad));
         }
     }
-    free(palabra);
+
     fprintf(resultados, "Las palabras que no aparecen tienen probabilidad 0.0 \n");
     fprintf(resultados, "\n");
 }
