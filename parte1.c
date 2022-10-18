@@ -31,7 +31,7 @@ double entropiaExtension(double probabilidades[], int orden)
         {
             probabilidadExtension *= probabilidades[extension[j]];
         }
-        entropiaOrdenN += probabilidadExtension * (-log2(probabilidadExtension));
+        entropiaOrdenN += probabilidadExtension * (-(log(probabilidadExtension) / log(CANT_SIMBOLOS)));
 
         // Incrementar extension
         int j = 0;
@@ -61,11 +61,11 @@ void leerArchivo(const char *nombreArchivo, double probabilidad[], double mat[][
     }
 
     char ant = fgetc(arch);
-    while (!feof(arch))
+    char sig;
+    while ((sig = fgetc(arch)) != EOF)
     {
         probabilidad[ant - 'A']++;
 
-        char sig = fgetc(arch);
         mat[sig - 'A'][ant - 'A']++;
 
         ant = sig;
@@ -115,7 +115,7 @@ double calcularEntropia(double probabilidades[])
     for (int i = 0; i < CANT_SIMBOLOS; i++)
     {
         double prob = probabilidades[i];
-        entropia += prob * log2(prob);
+        entropia += prob * (log(prob) / log(CANT_SIMBOLOS));
     }
     return -entropia;
 }

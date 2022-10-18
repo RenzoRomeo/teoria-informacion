@@ -209,7 +209,7 @@ double calcularInformacion(double probabilidad)
 
     if (probabilidad > 0.0)
     {
-        informacion = -log2(probabilidad);
+        informacion = -(log(probabilidad) / log(CANT_SIMBOLOS));
     }
 
     return informacion;
