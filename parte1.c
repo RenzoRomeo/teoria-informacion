@@ -8,7 +8,7 @@
 
 double entropiaExtension(double probabilidades[], int orden);
 
-void leerArchivo(const char *nombreArchivo, double probabilidad[], double mat[][CANT_SIMBOLOS]);
+void leerArchivo(const char *nombreArchivo, double probabilidades[], double mat[][CANT_SIMBOLOS]);
 
 int esMemoriaNula(double probabilidades[], double mat[][CANT_SIMBOLOS]);
 
@@ -51,7 +51,7 @@ double entropiaExtension(double probabilidades[], int orden)
     return entropiaOrdenN;
 }
 
-void leerArchivo(const char *nombreArchivo, double probabilidad[], double mat[][CANT_SIMBOLOS])
+void leerArchivo(const char *nombreArchivo, double probabilidades[], double mat[][CANT_SIMBOLOS])
 {
     FILE *arch = fopen(nombreArchivo, "r");
     if (arch == NULL)
@@ -64,7 +64,7 @@ void leerArchivo(const char *nombreArchivo, double probabilidad[], double mat[][
     char sig;
     while ((sig = fgetc(arch)) != EOF)
     {
-        probabilidad[ant - 'A']++;
+        probabilidades[ant - 'A']++;
 
         mat[sig - 'A'][ant - 'A']++;
 
@@ -90,7 +90,7 @@ void leerArchivo(const char *nombreArchivo, double probabilidad[], double mat[][
 
     for (int i = 0; i < CANT_SIMBOLOS; i++)
     {
-        probabilidad[i] /= (double)CANT_CARACTERES;
+        probabilidades[i] /= (double)CANT_CARACTERES;
     }
 
     fclose(arch);
