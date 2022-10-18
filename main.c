@@ -53,16 +53,15 @@ int main(int argc, char *argv[]) {
     
     fprintf(resultados, "\n");
 
+    fclose(resultados);
     
     // PARTE 2
-    fprintf(resultados, "---Parte 2--- \n");
-    fprintf(resultados, "\n");
-    procesarCodigo(resultados, 3, entropia);
-    procesarCodigo(resultados, 5, entropia);
-    procesarCodigo(resultados, 7, entropia);
+    procesarCodigo(3, entropia);
+    procesarCodigo(5, entropia);
+    procesarCodigo(7, entropia);
     
-    fclose(resultados);
     printf("Programa ejecutado con exito \n");
     printf("Resultados guardados en 'resultados.txt' \n");
+
     return 0;
 }

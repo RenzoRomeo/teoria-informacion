@@ -5,6 +5,7 @@
 
 #define CANT_SIMBOLOS 3
 #define DIF 0.01
+#define NOMBRE_BASE "parte2_longitud"
 
 typedef struct
 {
@@ -21,14 +22,14 @@ void mostrarInformacion(FILE *resultados, Codigo codigos[], int cantPalabras, in
 int cumpleKraft(int longitudes[], int cantidadPalabras);
 double calcularLongitudMedia(Codigo codigos[], int longitudes[], int cantPalabras);
 int esCodigoCompacto(Codigo codigos[], int longitudes[], int cantidadPalabras);
-void procesarCodigo(FILE *resultados, int longitudExtension, double entropiaOriginal);
+void procesarCodigo(int longitudExtension, double entropiaOriginal);
 double calcularRendimiento(double entropia, double longitudMedia);
 double calcularRedundancia(double entropia, double longitudMedia);
 void huffman(Codigo probabilidades[], int cantidad, char *codigoHuffman[]);
 void regenerarArchivo(const char *nombreArchivo, const char *nombreArchivoCodificado, Codigo codigos[], int cantPalabras, int tamanoPalabra, char *codigoHuffman[]);
 int compararCodigos(const void *a, const void *b);
 
-void procesarCodigo(FILE *resultados, int longitudExtension, double entropiaOriginal)
+void procesarCodigo(int longitudExtension, double entropiaOriginal)
 {
     // Cantidad de palabras del codigo
     int cantPalabras;
@@ -38,9 +39,8 @@ void procesarCodigo(FILE *resultados, int longitudExtension, double entropiaOrig
     // Almacena la longitud de cada palabra codigo
     int *longitudes;
     double longitudMedia;
-
-    fprintf(resultados, "Codigo de longitud %d \n", longitudExtension);
-    fprintf(resultados, "\n");
+    char *nombreArchivo = (char *)malloc(sizeof(char) * 100); 
+    FILE *resultados;
 
     cantPalabras = (int)pow(CANT_SIMBOLOS, longitudExtension);
 
@@ -54,18 +54,25 @@ void procesarCodigo(FILE *resultados, int longitudExtension, double entropiaOrig
     }
 
     calcularProbabilidades("datos.txt", longitudExtension, codigos, cantPalabras);
-    mostrarInformacion(resultados, codigos, cantPalabras, longitudExtension);
 
-    fprintf(resultados, "Resultados para el codigo de longitud %d \n", longitudExtension);
-    fprintf(resultados, "\n");
+    sprintf(nombreArchivo, "%s%d_incisoA.txt", NOMBRE_BASE, longitudExtension);
+    resultados = fopen(nombreArchivo, "w");
+
+    mostrarInformacion(resultados, codigos, cantPalabras, longitudExtension);
     entropia = calcularEntropiaFuente(codigos, cantPalabras);
     fprintf(resultados, "Entropia: %f \n", entropia);
+
+    fclose(resultados);
 
     longitudes = (int *)malloc(sizeof(int) * cantPalabras);
     for (int i = 0; i < cantPalabras; i++)
     {
         longitudes[i] = longitudExtension;
     }
+
+    sprintf(nombreArchivo, "%s%d_incisoC.txt", NOMBRE_BASE, longitudExtension);
+    resultados = fopen(nombreArchivo, "w");
+
     fprintf(resultados, "Cumple inecuacion de Kraft y Macmillan para codigo de longitud %d: %s \n", longitudExtension, cumpleKraft(longitudes, cantPalabras) ? "SI" : "NO");
 
     longitudMedia = calcularLongitudMedia(codigos, longitudes, cantPalabras);
@@ -73,10 +80,15 @@ void procesarCodigo(FILE *resultados, int longitudExtension, double entropiaOrig
 
     fprintf(resultados, "El codigo es compacto: %s \n", esCodigoCompacto(codigos, longitudes, cantPalabras) ? "SI" : "NO");
 
+    fclose(resultados);
+
+    sprintf(nombreArchivo, "%s%d_incisoD.txt", NOMBRE_BASE, longitudExtension);
+    resultados = fopen(nombreArchivo, "w");
+
     fprintf(resultados, "Rendimiento: %f \n", calcularRendimiento(entropiaOriginal, longitudMedia));
     fprintf(resultados, "Redundancia: %f \n", calcularRedundancia(entropiaOriginal, longitudMedia));
-    fprintf(resultados, "\n");
-    fprintf(resultados, "\n");
+    
+    fclose(resultados);
 
     // Ordenar codigos por probabilidad para Huffman
     qsort(codigos, cantPalabras, sizeof(Codigo), compararCodigos);
@@ -84,6 +96,9 @@ void procesarCodigo(FILE *resultados, int longitudExtension, double entropiaOrig
     char **codigoHuffman = (char **)malloc(sizeof(char *) * cantPalabras);
 
     huffman(codigos, cantPalabras, codigoHuffman);
+
+    sprintf(nombreArchivo, "%s%d_incisoE.txt", NOMBRE_BASE, longitudExtension);
+    resultados = fopen(nombreArchivo, "w");
 
     fprintf(resultados, "Codigo Huffman\n\n");
     fprintf(resultados, "\n");
@@ -93,7 +108,8 @@ void procesarCodigo(FILE *resultados, int longitudExtension, double entropiaOrig
     {
         fprintf(resultados, "%s -> %s\n", codigos[i].palabra, codigoHuffman[i]);
     }
-    fprintf(resultados, "\n\n");
+    
+    fclose(resultados);
 
     char *nombreArchivoCodificado = (char *)malloc(sizeof(char) * 30);
     sprintf(nombreArchivoCodificado, "datosCodificadosLongitud%d.dat", longitudExtension);
