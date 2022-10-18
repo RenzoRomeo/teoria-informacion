@@ -54,9 +54,9 @@ int main(int argc, char *argv[]) {
     fclose(resultados);
     
     // PARTE 2
-    procesarCodigo(3, entropia);
-    procesarCodigo(5, entropia);
-    procesarCodigo(7, entropia);
+    procesarCodigo(3);
+    procesarCodigo(5);
+    procesarCodigo(7);
     
     printf("Programa ejecutado con exito \n");
 
