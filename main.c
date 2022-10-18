@@ -2,7 +2,7 @@
 #include "parte2.c"
 
 int main(int argc, char *argv[]) {
-    FILE *resultados = fopen("resultados.txt", "w");
+    FILE *resultados = fopen("parte1_incisoA", "w");
 
     int calcularEntropiaOrden20 = 0;
     
@@ -13,10 +13,7 @@ int main(int argc, char *argv[]) {
         }
     }
 
-    // PARTE 1
-    fprintf(resultados, "---Parte 1--- \n");
-    fprintf(resultados, "\n");
-    
+    // PARTE 1   
     double probabilidades[CANT_SIMBOLOS];
     double mat[CANT_SIMBOLOS][CANT_SIMBOLOS] = {0};
 
@@ -41,7 +38,10 @@ int main(int argc, char *argv[]) {
 
     fprintf(resultados, "La fuente es de memoria nula: %s\n\n", esMemoriaNula(probabilidades, mat) ? "SI" : "NO");
 
+    fclose(resultados);
+
     // Inciso B
+    resultados = fopen("parte1_incisoB", "w");
     double entropia = calcularEntropia(probabilidades);
     fprintf(resultados, "Entropia (Fuente Original): %f bits\n", entropia);
     fprintf(resultados, "Entropia (Extension Orden 20, n * H(S)): %f bits\n", entropia * 20);
@@ -50,8 +50,6 @@ int main(int argc, char *argv[]) {
     {
         fprintf(resultados, "Entropia (Extension Orden 20, calculada por extension): %f bits\n", entropiaExtension(probabilidades, 20));
     }
-    
-    fprintf(resultados, "\n");
 
     fclose(resultados);
     
