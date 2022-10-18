@@ -2,7 +2,7 @@
 #include "parte2.c"
 
 int main(int argc, char *argv[]) {
-    FILE *resultados = fopen("parte1_incisoA", "w");
+    FILE *resultados = fopen("parte1_incisoA.txt", "w");
 
     int calcularEntropiaOrden20 = 0;
     
@@ -41,7 +41,7 @@ int main(int argc, char *argv[]) {
     fclose(resultados);
 
     // Inciso B
-    resultados = fopen("parte1_incisoB", "w");
+    resultados = fopen("parte1_incisoB.txt", "w");
     double entropia = calcularEntropia(probabilidades);
     fprintf(resultados, "Entropia (Fuente Original): %f bits\n", entropia);
     fprintf(resultados, "Entropia (Extension Orden 20, n * H(S)): %f bits\n", entropia * 20);
@@ -59,7 +59,6 @@ int main(int argc, char *argv[]) {
     procesarCodigo(7, entropia);
     
     printf("Programa ejecutado con exito \n");
-    printf("Resultados guardados en 'resultados.txt' \n");
 
     return 0;
 }
