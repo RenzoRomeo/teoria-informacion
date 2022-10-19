@@ -85,16 +85,16 @@ public class PrimeraParte {
             System.out.println("Error al leer archivo");
         }
     }
-    public static int esMemoriaNula(double[] probabilidades, double[][] mat){
+    public static boolean esMemoriaNula(double[] probabilidades, double[][] mat){
         for (int i = 0; i < CANT_SIMBOLOS; i++)
         {
             for (int j = 0; j < CANT_SIMBOLOS; j++)
             {
                 if (Math.abs(mat[i][j] - probabilidades[i]) > DIF)
-                    return 0;
+                    return false;
             }
         }
-        return 1;
+        return true;
     }
 
     public static double calcularEntropia(double[] probabilidades){
