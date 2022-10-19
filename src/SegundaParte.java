@@ -1,9 +1,14 @@
-import java.io.File;
-import java.io.FileReader;
-import java.io.Reader;
+import java.io.*;
 import java.util.HashMap;
 
 public class SegundaParte {
+    private static int CANTIDAD_SIMBOLOS = 3;
+
+    public static void procesarCodigo(int longitudExtension) {
+        HashMap<String, Double> probabilidades = new HashMap<>();
+
+    }
+
     private static void calcularProbabilidades(String nombreArchivo, int tamanoPalabra, HashMap<String, Double> codigos) {
         try {
             File archivo = new File(nombreArchivo);
@@ -41,7 +46,7 @@ public class SegundaParte {
     }
 
     // Calcula la información en base a una probabilidad.
-    private double calcularInformacion(double probabilidad) {
+    private static double calcularInformacion(double probabilidad) {
         double informacion = 0.0;
 
         if(probabilidad != 0) {
@@ -52,11 +57,11 @@ public class SegundaParte {
     }
 
     // Calcula la entropía de una fuente.
-    private double calcularEntropiaFuente(HashMap<String, Double> codigos) {
+    private static double calcularEntropiaFuente(HashMap<String, Double> codigos) {
         double entropia = 0.0;
 
-        for(String key : codigos.keySet()) {
-            double probabilidad = codigos.get(key);
+        for(String palabra : codigos.keySet()) {
+            double probabilidad = codigos.get(palabra);
             entropia += probabilidad * calcularInformacion(probabilidad);
         }
 
@@ -64,10 +69,48 @@ public class SegundaParte {
     }
 
     // Muestra la informacion y la probabilidad de cada palabra.
-    private void mostrarInformacion(File resultados, HashMap<String, Double> codigos, int tamanoPalabra) {
+    private static void mostrarInformacion(File resultados, HashMap<String, Double> codigos) throws IOException {
+        Writer writer = new FileWriter(resultados);
 
-        for(String key : codigos.keySet()) {
-            System.out.println(key + " - " + codigos.get(key) + " - " + calcularInformacion(codigos.get(key)));
+        writer.write("Palabra | Probabilidad | Informacion\n");
+
+        for(String palabra : codigos.keySet()) {
+            double probabilidad = codigos.get(palabra);
+            writer.write(palabra + ": " + probabilidad + " (" + calcularInformacion(probabilidad) + ")\n");
         }
+
+        writer.write("Las palabras que no aparecen en el archivo tienen probabilidad 0.\n");
+        writer.close();
+    }
+
+    private static double calcularLongitudMedia(HashMap<String, Double> codigos) {
+        double longitudMedia = 0.0;
+
+        for(String palabra : codigos.keySet()) {
+            longitudMedia += codigos.get(palabra) * palabra.length();
+        }
+
+        return longitudMedia;
+    }
+
+    private static boolean esCodigoCompacto(HashMap<String, Double> codigos) {
+        boolean esCompacto = true;
+
+        for(String palabra : codigos.keySet()) {
+            if(Math.abs(codigos.get(palabra) - Math.pow(CANTIDAD_SIMBOLOS, -palabra.length())) > 0.0001) {
+                esCompacto = false;
+                break;
+            }
+        }
+
+        return esCompacto;
+    }
+
+    private double calcularRendimiento(double entropia, double lontiudMedia) {
+        return entropia / lontiudMedia;
+    }
+
+    public double calcularRedundancia(double entropia, double longitudMedia) {
+        return (longitudMedia - entropia) / longitudMedia;
     }
 }
