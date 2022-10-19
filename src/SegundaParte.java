@@ -3,9 +3,51 @@ import java.util.HashMap;
 
 public class SegundaParte {
     private static int CANTIDAD_SIMBOLOS = 3;
+    private static String RUTA_BASE = "./salidas/parte2_longitud";
 
-    public static void procesarCodigo(int longitudExtension) {
-        HashMap<String, Double> probabilidades = new HashMap<>();
+    public static void procesarCodigo(int longitudExtension) throws IOException {
+        File archivo;
+        BufferedWriter writer;
+
+        HashMap<String, Double> codigos = new HashMap<>();
+        calcularProbabilidades("datos.txt", longitudExtension, codigos);
+
+        archivo = new File(RUTA_BASE + longitudExtension + "_incisoA.txt");
+
+        mostrarInformacion(archivo, codigos);
+        double entropia = calcularEntropiaFuente(codigos);
+
+        writer = new BufferedWriter(new FileWriter(archivo));
+        writer.write("Entropia: " + entropia);
+        writer.close();
+
+        archivo = new File(RUTA_BASE + longitudExtension + "_incisoC.txt");
+
+        double longitudMedia = calcularLongitudMedia(codigos);
+
+        writer = new BufferedWriter(new FileWriter(archivo));
+        writer.write("Cumple inecuaciones de Kraft y McMillan: " + cumpleKraft(codigos) ? "SI" : "NO");
+        writer.write("Longitud media: " + longitudMedia);
+        writer.write("Es codigo compacto: " + (esCodigoCompacto(codigos) ? "SI" : "NO"));
+        writer.close();
+
+        archivo = new File(RUTA_BASE + longitudExtension + "_incisoD.txt");
+        writer = new BufferedWriter(new FileWriter(archivo));
+        writer.write("Rendimiento: " + calcularRendimiento(entropia, longitudMedia));
+        writer.write("Redundancia: " + calcularRedundancia(entropia, longitudMedia));
+        writer.close();
+
+        HashMap<String, String> codigosHuffman = Huffman.huffman(codigos);
+
+        archivo = new File(RUTA_BASE + longitudExtension + "_incisoE.txt");
+        writer = new BufferedWriter(new FileWriter(archivo));
+        writer.write("Codigo Huffman\n\n");
+        writer.write("Palabra | Codigo\n");
+        for (String palabra : codigosHuffman.keySet()) {
+            writer.write(palabra + " | " + codigosHuffman.get(palabra) + "\n");
+        }
+        writer.close();
+
 
     }
 
@@ -106,11 +148,11 @@ public class SegundaParte {
         return esCompacto;
     }
 
-    private double calcularRendimiento(double entropia, double lontiudMedia) {
+    private static double calcularRendimiento(double entropia, double lontiudMedia) {
         return entropia / lontiudMedia;
     }
 
-    public double calcularRedundancia(double entropia, double longitudMedia) {
+    private static double calcularRedundancia(double entropia, double longitudMedia) {
         return (longitudMedia - entropia) / longitudMedia;
     }
 }
