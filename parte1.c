@@ -57,7 +57,7 @@ void leerArchivo(const char *nombreArchivo, double probabilidades[], double mat[
     if (arch == NULL)
     {
         printf("No se pudo abrir el archivo");
-        return;
+        exit(1);
     }
 
     char ant = fgetc(arch);
