@@ -5,7 +5,7 @@
 
 #define CANT_SIMBOLOS 3
 #define DIF 0.01
-#define NOMBRE_BASE "parte2_longitud"
+#define NOMBRE_BASE "./salidas/parte2_longitud"
 
 typedef struct
 {
@@ -39,7 +39,7 @@ void procesarCodigo(int longitudExtension)
     // Almacena la longitud de cada palabra codigo
     int *longitudes;
     double longitudMedia;
-    char *nombreArchivo = (char *)malloc(sizeof(char) * 100); 
+    char *nombreArchivo = (char *)malloc(sizeof(char) * 100);
     FILE *resultados;
 
     cantPalabras = (int)pow(CANT_SIMBOLOS, longitudExtension);
@@ -87,7 +87,7 @@ void procesarCodigo(int longitudExtension)
 
     fprintf(resultados, "Rendimiento: %f \n", calcularRendimiento(entropia, longitudMedia));
     fprintf(resultados, "Redundancia: %f \n", calcularRedundancia(entropia, longitudMedia));
-    
+
     fclose(resultados);
 
     // Ordenar codigos por probabilidad para Huffman
@@ -108,7 +108,7 @@ void procesarCodigo(int longitudExtension)
     {
         fprintf(resultados, "%s -> %s\n", codigos[i].palabra, codigoHuffman[i]);
     }
-    
+
     fclose(resultados);
 
     char *nombreArchivoCodificado = (char *)malloc(sizeof(char) * 30);

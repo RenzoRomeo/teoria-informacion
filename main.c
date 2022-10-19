@@ -1,9 +1,21 @@
+#include <sys/stat.h>
+#include <sys/types.h>
+
 #include "parte1.c"
 #include "parte2.c"
 
+int mkdir(const char *pathname, int mode);
+
 int main(int argc, char *argv[])
 {
-    FILE *resultados = fopen("parte1_incisoA.txt", "w");
+    // Si no existe la carpeta "salida", crearla
+    struct stat st = {0};
+    if (stat("salidas", &st) == -1)
+    {
+        mkdir("salidas", 0777);
+    }
+
+    FILE *resultados = fopen("./salidas/parte1_incisoA.txt", "w");
 
     int calcularEntropiaOrden20 = 0;
 
@@ -44,7 +56,7 @@ int main(int argc, char *argv[])
     fclose(resultados);
 
     // Inciso B
-    resultados = fopen("parte1_incisoB.txt", "w");
+    resultados = fopen("./salidas/parte1_incisoB.txt", "w");
     double entropia = calcularEntropia(probabilidades);
     fprintf(resultados, "Entropia (Fuente Original): %f\n", entropia);
     fprintf(resultados, "Entropia (Extension Orden 20, n * H(S)): %f\n", entropia * 20);
