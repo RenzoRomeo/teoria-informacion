@@ -46,7 +46,7 @@ public class SegundaParte {
     }
 
     // Calcula la información en base a una probabilidad.
-    private double calcularInformacion(double probabilidad) {
+    private static double calcularInformacion(double probabilidad) {
         double informacion = 0.0;
 
         if(probabilidad != 0) {
@@ -57,7 +57,7 @@ public class SegundaParte {
     }
 
     // Calcula la entropía de una fuente.
-    private double calcularEntropiaFuente(HashMap<String, Double> codigos) {
+    private static double calcularEntropiaFuente(HashMap<String, Double> codigos) {
         double entropia = 0.0;
 
         for(String palabra : codigos.keySet()) {
@@ -69,7 +69,7 @@ public class SegundaParte {
     }
 
     // Muestra la informacion y la probabilidad de cada palabra.
-    private void mostrarInformacion(File resultados, HashMap<String, Double> codigos) throws IOException {
+    private static void mostrarInformacion(File resultados, HashMap<String, Double> codigos) throws IOException {
         Writer writer = new FileWriter(resultados);
 
         writer.write("Palabra | Probabilidad | Informacion\n");
@@ -113,6 +113,4 @@ public class SegundaParte {
     public double calcularRedundancia(double entropia, double longitudMedia) {
         return (longitudMedia - entropia) / longitudMedia;
     }
-
-
 }
