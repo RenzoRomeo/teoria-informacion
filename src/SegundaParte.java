@@ -3,6 +3,7 @@ import java.util.HashMap;
 
 public class SegundaParte {
     private static int CANTIDAD_SIMBOLOS = 3;
+    private static double DIF = 0.01;
     private static String RUTA_BASE = "./salidas/parte2_longitud";
 
     public static void procesarCodigo(int longitudExtension) throws IOException {
@@ -154,5 +155,15 @@ public class SegundaParte {
 
     private static double calcularRedundancia(double entropia, double longitudMedia) {
         return (longitudMedia - entropia) / longitudMedia;
+    }
+
+    private static boolean cumpleKraft(HashMap<String, Double> codigos) {
+        double kraft = 0.0;
+
+        for(String palabra : codigos.keySet()) {
+            kraft += Math.pow(CANTIDAD_SIMBOLOS, -palabra.length());
+        }
+
+        return kraft <= 1.0 + DIF;
     }
 }
