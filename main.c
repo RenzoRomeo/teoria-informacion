@@ -43,12 +43,12 @@ int main(int argc, char *argv[]) {
     // Inciso B
     resultados = fopen("parte1_incisoB.txt", "w");
     double entropia = calcularEntropia(probabilidades);
-    fprintf(resultados, "Entropia (Fuente Original): %f bits\n", entropia);
-    fprintf(resultados, "Entropia (Extension Orden 20, n * H(S)): %f bits\n", entropia * 20);
+    fprintf(resultados, "Entropia (Fuente Original): %f\n", entropia);
+    fprintf(resultados, "Entropia (Extension Orden 20, n * H(S)): %f\n", entropia * 20);
     
     if(calcularEntropiaOrden20)
     {
-        fprintf(resultados, "Entropia (Extension Orden 20, calculada por extension): %f bits\n", entropiaExtension(probabilidades, 20));
+        fprintf(resultados, "Entropia (Extension Orden 20, calculada por extension): %f\n", entropiaExtension(probabilidades, 20));
     }
 
     fclose(resultados);

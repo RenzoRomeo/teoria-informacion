@@ -238,7 +238,7 @@ void mostrarInformacion(FILE *resultados, Codigo codigos[], int cantPalabras, in
         Codigo codigo = codigos[i];
         if (codigo.probabilidad > 0.0)
         {
-            fprintf(resultados, "%s: %f (%f bits)\n", codigo.palabra, codigo.probabilidad, calcularInformacion(codigo.probabilidad));
+            fprintf(resultados, "%s: %f (%f)\n", codigo.palabra, codigo.probabilidad, calcularInformacion(codigo.probabilidad));
         }
     }
 
