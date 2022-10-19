@@ -14,14 +14,15 @@ public class PrimeraParte {
 
     public static double entropiaExtension(double[] probabilidades, int orden){
         int[] extension = new int[orden];
+        Arrays.fill(extension, 0);
 
-        int cantCiclos = (int)Math.pow(CANT_SIMBOLOS, orden);
+        long cantCiclos = (long)Math.pow(CANT_SIMBOLOS, orden);
 
         double entropiaOrdenN = 0.0;
 
         //Para cada extension
 
-        for (int i = 0; i < cantCiclos; i++) {
+        for (long i = 0; i < cantCiclos; i++) {
             double probabilidadExtension = 1.0;
             for (int j = 0; j < orden; j++) {
                 probabilidadExtension *= probabilidades[extension[j]];
