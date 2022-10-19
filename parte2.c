@@ -111,8 +111,8 @@ void procesarCodigo(int longitudExtension)
 
     fclose(resultados);
 
-    char *nombreArchivoCodificado = (char *)malloc(sizeof(char) * 30);
-    sprintf(nombreArchivoCodificado, "datosCodificadosLongitud%d.dat", longitudExtension);
+    char *nombreArchivoCodificado = (char *)malloc(sizeof(char) * 100);
+    sprintf(nombreArchivoCodificado, "./salidas/parte2_longitud%d_incisoE_regenerado.dat", longitudExtension);
 
     regenerarArchivo("datos.txt", nombreArchivoCodificado, codigos, cantPalabras, longitudExtension, codigoHuffman);
 
