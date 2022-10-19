@@ -22,12 +22,12 @@ public class Huffman {
         }
     }
 
-    public static Map<String, String> huffman(Map<String, Double> probabilidades) {
+    public static HashMap<String, String> huffman(HashMap<String, Double> probabilidades) {
         HashMap<String, String> codigoHuffman = new HashMap<>();
 
         PriorityQueue<NodoHuffman> q = new PriorityQueue<>(probabilidades.size(), new Comparador());
 
-        for (Map.Entry<String, Double> par : probabilidades.entrySet()) {
+        for (HashMap.Entry<String, Double> par : probabilidades.entrySet()) {
             NodoHuffman nodo = new NodoHuffman(par.getKey(), par.getValue());
             nodo.izq = null;
             nodo.der = null;
