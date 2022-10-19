@@ -4,6 +4,13 @@ import java.io.Reader;
 import java.util.HashMap;
 
 public class SegundaParte {
+    private static int CANTIDAD_SIMBOLOS = 3;
+
+    public static void procesarCodigo(int longitudExtension) {
+        HashMap<String, Double> probabilidades = new HashMap<>();
+
+    }
+
     private static void calcularProbabilidades(String nombreArchivo, int tamanoPalabra, HashMap<String, Double> codigos) {
         try {
             File archivo = new File(nombreArchivo);
@@ -70,4 +77,37 @@ public class SegundaParte {
             System.out.println(key + " - " + codigos.get(key) + " - " + calcularInformacion(codigos.get(key)));
         }
     }
+
+    private static double calcularLongitudMedia(HashMap<String, Double> codigos) {
+        double longitudMedia = 0.0;
+
+        for(String palabra : codigos.keySet()) {
+            longitudMedia += codigos.get(palabra) * palabra.length();
+        }
+
+        return longitudMedia;
+    }
+
+    private static boolean esCodigoCompacto(HashMap<String, Double> codigos) {
+        boolean esCompacto = true;
+
+        for(String palabra : codigos.keySet()) {
+            if(Math.abs(codigos.get(palabra) - Math.pow(CANTIDAD_SIMBOLOS, -palabra.length())) > 0.0001) {
+                esCompacto = false;
+                break;
+            }
+        }
+
+        return esCompacto;
+    }
+
+    private double calcularRendimiento(double entropia, double lontiudMedia) {
+        return entropia / lontiudMedia;
+    }
+
+    public double calcularRedundancia(double entropia, double longitudMedia) {
+        return (longitudMedia - entropia) / longitudMedia;
+    }
+
+
 }
