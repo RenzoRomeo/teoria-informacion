@@ -1,5 +1,5 @@
 *.exe
-.vscode/*
 *.txt
 !datos.txt
 *.dat
+salidas
