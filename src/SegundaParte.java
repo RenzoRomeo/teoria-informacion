@@ -27,7 +27,7 @@ public class SegundaParte {
         double longitudMedia = calcularLongitudMedia(codigos);
 
         writer = new BufferedWriter(new FileWriter(archivo));
-        writer.write("Cumple inecuaciones de Kraft y McMillan: " + cumpleKraft(codigos) ? "SI" : "NO");
+        writer.write("Cumple inecuaciones de Kraft y McMillan: " + (cumpleKraft(codigos) ? "SI" : "NO"));
         writer.write("Longitud media: " + longitudMedia);
         writer.write("Es codigo compacto: " + (esCodigoCompacto(codigos) ? "SI" : "NO"));
         writer.close();
@@ -48,8 +48,6 @@ public class SegundaParte {
             writer.write(palabra + " | " + codigosHuffman.get(palabra) + "\n");
         }
         writer.close();
-
-
     }
 
     private static void calcularProbabilidades(String nombreArchivo, int tamanoPalabra, HashMap<String, Double> codigos) {
@@ -165,5 +163,9 @@ public class SegundaParte {
         }
 
         return kraft <= 1.0 + DIF;
+    }
+
+    private static void regenerarArchivo(String nombreOriginal, String nombreRegenerado, HashMap<String, String> codigos) throws IOException {
+
     }
 }
