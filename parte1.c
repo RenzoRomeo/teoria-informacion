@@ -25,7 +25,7 @@ double entropiaExtension(double probabilidades[], int orden)
 
     // Para cada extension
     for (unsigned int i = 0; i < cantCiclos; i++)
-    {        
+    {
         double probabilidadExtension = 1.0;
         for (int j = 0; j < orden; j++)
         {
@@ -40,7 +40,7 @@ double entropiaExtension(double probabilidades[], int orden)
             extension[j] = 0;
             j++;
         }
-        if(j < orden)
+        if (j < orden)
         {
             extension[j]++;
         }
@@ -69,6 +69,10 @@ void leerArchivo(const char *nombreArchivo, double probabilidades[], double mat[
         mat[sig - 'A'][ant - 'A']++;
 
         ant = sig;
+    }
+    if (ant != EOF)
+    {
+        probabilidades[ant - 'A']++;
     }
 
     int sumas[3] = {0};
