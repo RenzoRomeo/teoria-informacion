@@ -22,14 +22,14 @@ void mostrarInformacion(FILE *resultados, Codigo codigos[], int cantPalabras, in
 int cumpleKraft(int longitudes[], int cantidadPalabras);
 double calcularLongitudMedia(Codigo codigos[], int longitudes[], int cantPalabras);
 int esCodigoCompacto(Codigo codigos[], int longitudes[], int cantidadPalabras);
-void procesarCodigo(int longitudExtension, double entropiaOriginal);
+void procesarCodigo(int longitudExtension);
 double calcularRendimiento(double entropia, double longitudMedia);
 double calcularRedundancia(double entropia, double longitudMedia);
 void huffman(Codigo probabilidades[], int cantidad, char *codigoHuffman[]);
 void regenerarArchivo(const char *nombreArchivo, const char *nombreArchivoCodificado, Codigo codigos[], int cantPalabras, int tamanoPalabra, char *codigoHuffman[]);
 int compararCodigos(const void *a, const void *b);
 
-void procesarCodigo(int longitudExtension, double entropiaOriginal)
+void procesarCodigo(int longitudExtension)
 {
     // Cantidad de palabras del codigo
     int cantPalabras;
@@ -85,8 +85,8 @@ void procesarCodigo(int longitudExtension, double entropiaOriginal)
     sprintf(nombreArchivo, "%s%d_incisoD.txt", NOMBRE_BASE, longitudExtension);
     resultados = fopen(nombreArchivo, "w");
 
-    fprintf(resultados, "Rendimiento: %f \n", calcularRendimiento(entropiaOriginal, longitudMedia));
-    fprintf(resultados, "Redundancia: %f \n", calcularRedundancia(entropiaOriginal, longitudMedia));
+    fprintf(resultados, "Rendimiento: %f \n", calcularRendimiento(entropia, longitudMedia));
+    fprintf(resultados, "Redundancia: %f \n", calcularRedundancia(entropia, longitudMedia));
     
     fclose(resultados);
 
@@ -282,14 +282,14 @@ int esCodigoCompacto(Codigo codigos[], int longitudes[], int cantidadPalabras)
     return 1;
 }
 
-double calcularRendimiento(double entropiaFuente, double longitudMedia)
+double calcularRendimiento(double entropia, double longitudMedia)
 {
-    return entropiaFuente / longitudMedia;
+    return entropia / longitudMedia;
 }
 
-double calcularRedundancia(double entropiaFuente, double longitudMedia)
+double calcularRedundancia(double entropia, double longitudMedia)
 {
-    return (longitudMedia - entropiaFuente) / longitudMedia;
+    return (longitudMedia - entropia) / longitudMedia;
 }
 
 // Pre: Las probabilidades están ordenadas descendentemente
