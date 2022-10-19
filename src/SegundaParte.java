@@ -1,6 +1,4 @@
-import java.io.File;
-import java.io.FileReader;
-import java.io.Reader;
+import java.io.*;
 import java.util.HashMap;
 
 public class SegundaParte {
@@ -55,8 +53,8 @@ public class SegundaParte {
     private double calcularEntropiaFuente(HashMap<String, Double> codigos) {
         double entropia = 0.0;
 
-        for(String key : codigos.keySet()) {
-            double probabilidad = codigos.get(key);
+        for(String palabra : codigos.keySet()) {
+            double probabilidad = codigos.get(palabra);
             entropia += probabilidad * calcularInformacion(probabilidad);
         }
 
@@ -64,10 +62,17 @@ public class SegundaParte {
     }
 
     // Muestra la informacion y la probabilidad de cada palabra.
-    private void mostrarInformacion(File resultados, HashMap<String, Double> codigos, int tamanoPalabra) {
+    private void mostrarInformacion(File resultados, HashMap<String, Double> codigos) throws IOException {
+        Writer writer = new FileWriter(resultados);
 
-        for(String key : codigos.keySet()) {
-            System.out.println(key + " - " + codigos.get(key) + " - " + calcularInformacion(codigos.get(key)));
+        writer.write("Palabra | Probabilidad | Informacion\n");
+
+        for(String palabra : codigos.keySet()) {
+            double probabilidad = codigos.get(palabra);
+            writer.write(palabra + ": " + probabilidad + " (" + calcularInformacion(probabilidad) + ")\n");
         }
+
+        writer.write("Las palabras que no aparecen en el archivo tienen probabilidad 0.\n");
+        writer.close();
     }
 }
