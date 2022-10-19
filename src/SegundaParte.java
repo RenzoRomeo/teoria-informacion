@@ -48,6 +48,8 @@ public class SegundaParte {
             writer.write(palabra + " | " + codigosHuffman.get(palabra) + "\n");
         }
         writer.close();
+
+        regenerarArchivo("datos.txt", RUTA_BASE + longitudExtension + "_incisoE_regenerado.txt", codigosHuffman, longitudExtension);
     }
 
     private static void calcularProbabilidades(String nombreArchivo, int tamanoPalabra, HashMap<String, Double> codigos) {
@@ -165,7 +167,37 @@ public class SegundaParte {
         return kraft <= 1.0 + DIF;
     }
 
-    private static void regenerarArchivo(String nombreOriginal, String nombreRegenerado, HashMap<String, String> codigos) throws IOException {
+    private static void regenerarArchivo(String nombreOriginal, String nombreRegenerado, HashMap<String, String> codigosHuffman, int tamanoPalabra) throws IOException {
+        File archivo = new File(nombreOriginal);
+        Reader reader = new FileReader(archivo);
 
+        archivo = new File(nombreRegenerado);
+        BufferedWriter writer = new BufferedWriter(new FileWriter(archivo));
+
+        int b = 0;
+        int cantBit = 0;
+        String palabra = "";
+        char c;
+        int cont = 0;
+
+        while((c = (char)reader.read()) != -1) {
+            palabra += c;
+            cont++;
+
+            if (cont == tamanoPalabra) {
+                cont = 0;
+                String codigo = codigosHuffman.get(palabra);
+                for (int i = 0; i < codigo.length(); i++) {
+                    b = b << 1;
+                    b += codigo.charAt(i) - '0';
+                    cantBit++;
+                    if (cantBit == 8) {
+                        writer.write(b);
+                        b = 0;
+                        cantBit = 0;
+                    }
+                }
+            }
+        }
     }
 }
