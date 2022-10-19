@@ -4,8 +4,6 @@
 #include "parte1.c"
 #include "parte2.c"
 
-int mkdir(const char *pathname, int mode);
-
 int main(int argc, char *argv[])
 {
     // Si no existe la carpeta "salida", crearla
