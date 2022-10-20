@@ -36,11 +36,8 @@ public class Huffman {
             q.add(nodo);
         }
 
-        NodoHuffman raiz = null;
-
         while (q.size() > 1) {
             NodoHuffman a = q.poll();
-
             NodoHuffman b = q.poll();
 
             NodoHuffman f = new NodoHuffman("-", a.probabilidad + b.probabilidad);
@@ -49,7 +46,7 @@ public class Huffman {
 
             q.add(f);
         }
-        raiz = q.poll();
+        NodoHuffman raiz = q.poll();
 
         guardarCodigo(raiz, "", codigoHuffman);
 

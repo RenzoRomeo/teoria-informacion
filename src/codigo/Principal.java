@@ -1,7 +1,6 @@
 package codigo;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.Writer;
 import java.util.Arrays;
@@ -11,7 +10,7 @@ public class Principal {
     public static final int CANT_CARACTERES = 10000;
     public static final double DIF = 0.01;
 
-    public static void main(String[] args) throws FileNotFoundException {
+    public static void main(String[] args) {
         File directorio = new File("./salidas");
         directorio.mkdir();
 
@@ -83,7 +82,6 @@ public class Principal {
             System.out.println("Salidas generadas en la carpeta \"salidas\".");
         } catch (Exception e) {
             System.out.println("No se encontro el archivo");
-            e.printStackTrace();
         }
     }
 }
