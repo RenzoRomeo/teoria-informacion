@@ -16,7 +16,7 @@ public class SegundaParte {
         mostrarInformacion(archivo, codigos);
         double entropia = calcularEntropiaFuente(codigos);
 
-        writer = new BufferedWriter(new FileWriter(archivo));
+        writer = new BufferedWriter(new FileWriter(archivo, true));
         writer.write("Entropia: " + entropia);
         writer.close();
 
@@ -26,14 +26,14 @@ public class SegundaParte {
 
         writer = new BufferedWriter(new FileWriter(archivo));
         writer.write("Cumple inecuaciones de Kraft y McMillan: " + (cumpleKraft(codigos) ? "SI" : "NO") + "\n");
-        writer.write("Longitud media: " + longitudMedia);
+        writer.write("Longitud media: " + longitudMedia + "\n");
         writer.write("Es codigo compacto: " + (esCodigoCompacto(codigos) ? "SI" : "NO") + "\n");
         writer.close();
 
         archivo = new File(RUTA_BASE + longitudExtension + "_incisoD.txt");
         writer = new BufferedWriter(new FileWriter(archivo));
-        writer.write("Rendimiento: " + calcularRendimiento(entropia, longitudMedia));
-        writer.write("Redundancia: " + calcularRedundancia(entropia, longitudMedia));
+        writer.write("Rendimiento: " + calcularRendimiento(entropia, longitudMedia) + "\n");
+        writer.write("Redundancia: " + calcularRedundancia(entropia, longitudMedia) + "\n");
         writer.close();
 
         HashMap<String, String> codigosHuffman = Huffman.huffman(codigos);
