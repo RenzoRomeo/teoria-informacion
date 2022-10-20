@@ -58,15 +58,16 @@ public class SegundaParte {
             // Acumula la cantidad de palabras que aparecen en el archivo.
             int apariciones = 0;
             String palabra = "";
-            char c;
+            int c;
 
-            while((c = (char) reader.read()) != -1) {
-                palabra += c;
+            while((c = reader.read()) != -1) {
+
+                palabra += (char) c;
 
                 if(palabra.length() == tamanoPalabra) {
                     if(codigos.containsKey(palabra)) {
-                        apariciones = codigos.get(palabra).intValue();
-                        codigos.put(palabra, (double) (apariciones + 1));
+                        double aparicionesPalabra = codigos.get(palabra);
+                        codigos.put(palabra, (double) (aparicionesPalabra + 1));
                     } else {
                         codigos.put(palabra, 1.0);
                     }
@@ -91,7 +92,7 @@ public class SegundaParte {
         double informacion = 0.0;
 
         if(probabilidad != 0) {
-            informacion = -Math.log(probabilidad) / Math.log(2);
+            informacion = -Math.log(probabilidad) / Math.log(Principal.CANT_SIMBOLOS);
         }
 
         return informacion;
