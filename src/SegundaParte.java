@@ -25,9 +25,9 @@ public class SegundaParte {
         double longitudMedia = calcularLongitudMedia(codigos);
 
         writer = new BufferedWriter(new FileWriter(archivo));
-        writer.write("Cumple inecuaciones de Kraft y McMillan: " + (cumpleKraft(codigos) ? "SI" : "NO"));
+        writer.write("Cumple inecuaciones de Kraft y McMillan: " + (cumpleKraft(codigos) ? "SI" : "NO") + "\n");
         writer.write("Longitud media: " + longitudMedia);
-        writer.write("Es codigo compacto: " + (esCodigoCompacto(codigos) ? "SI" : "NO"));
+        writer.write("Es codigo compacto: " + (esCodigoCompacto(codigos) ? "SI" : "NO") + "\n");
         writer.close();
 
         archivo = new File(RUTA_BASE + longitudExtension + "_incisoD.txt");
