@@ -1,7 +1,7 @@
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.PriorityQueue;
+import java.util.TreeMap;
 
 public class Huffman {
 
@@ -22,12 +22,12 @@ public class Huffman {
         }
     }
 
-    public static HashMap<String, String> huffman(HashMap<String, Double> probabilidades) {
-        HashMap<String, String> codigoHuffman = new HashMap<>();
+    public static TreeMap<String, String> huffman(TreeMap<String, Double> codigos) {
+        TreeMap<String, String> codigoHuffman = new TreeMap<>();
 
-        PriorityQueue<NodoHuffman> q = new PriorityQueue<>(probabilidades.size(), new Comparador());
+        PriorityQueue<NodoHuffman> q = new PriorityQueue<>(codigos.size(), new Comparador());
 
-        for (HashMap.Entry<String, Double> par : probabilidades.entrySet()) {
+        for (Map.Entry<String, Double> par : codigos.entrySet()) {
             NodoHuffman nodo = new NodoHuffman(par.getKey(), par.getValue());
             nodo.izq = null;
             nodo.der = null;
@@ -37,15 +37,13 @@ public class Huffman {
         NodoHuffman raiz = null;
 
         while (q.size() > 1) {
-            NodoHuffman a = q.peek();
-            q.poll();
+            NodoHuffman a = q.poll();
 
-            NodoHuffman b = q.peek();
-            q.poll();
+            NodoHuffman b = q.poll();
 
             NodoHuffman f = new NodoHuffman("-", a.probabilidad + b.probabilidad);
-            f.izq = null;
-            f.der = null;
+            f.izq = a;
+            f.der = b;
 
             raiz = f;
 
@@ -57,14 +55,12 @@ public class Huffman {
         return codigoHuffman;
     }
 
-    private static void guardarCodigo(NodoHuffman raiz, String s, Map<String, String> codigoHuffman) {
-        if (raiz.izq == null && raiz.der == null && raiz.palabra != "-") {
-            System.out.println(raiz.palabra + ": " + s);
+    private static void guardarCodigo(NodoHuffman raiz, String s, TreeMap<String, String> codigoHuffman) {
+        if (raiz.izq == null && raiz.der == null && !raiz.palabra.equalsIgnoreCase("-")) {
             codigoHuffman.put(raiz.palabra, s);
         } else {
             guardarCodigo(raiz.izq, s + "0", codigoHuffman);
             guardarCodigo(raiz.der, s + "1", codigoHuffman);
         }
     }
-
 }

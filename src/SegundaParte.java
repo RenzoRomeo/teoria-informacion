@@ -1,14 +1,14 @@
 import java.io.*;
-import java.util.HashMap;
+import java.util.TreeMap;
 
 public class SegundaParte {
-    private static String RUTA_BASE = "./salidas/parte2_longitud";
+    private static final String RUTA_BASE = "./salidas/parte2_longitud";
 
     public static void procesarCodigo(int longitudExtension) throws IOException {
         File archivo;
         BufferedWriter writer;
 
-        HashMap<String, Double> codigos = new HashMap<>();
+        TreeMap<String, Double> codigos = new TreeMap<>();
         calcularProbabilidades("datos.txt", longitudExtension, codigos);
 
         archivo = new File(RUTA_BASE + longitudExtension + "_incisoA.txt");
@@ -32,25 +32,25 @@ public class SegundaParte {
 
         archivo = new File(RUTA_BASE + longitudExtension + "_incisoD.txt");
         writer = new BufferedWriter(new FileWriter(archivo));
-        writer.write("Rendimiento: " + calcularRendimiento(entropia, longitudMedia) + "\n");
-        writer.write("Redundancia: " + calcularRedundancia(entropia, longitudMedia) + "\n");
+        writer.write("Rendimiento: " + String.format("%.5f", calcularRendimiento(entropia, longitudMedia)) + "\n");
+        writer.write("Redundancia: " + String.format("%.5f", calcularRedundancia(entropia, longitudMedia)) + "\n");
         writer.close();
 
-        HashMap<String, String> codigosHuffman = Huffman.huffman(codigos);
+        TreeMap<String, String> codigosHuffman = Huffman.huffman(codigos);
 
         archivo = new File(RUTA_BASE + longitudExtension + "_incisoE.txt");
         writer = new BufferedWriter(new FileWriter(archivo));
         writer.write("Codigo Huffman\n\n");
         writer.write("Palabra | Codigo\n");
         for (String palabra : codigosHuffman.keySet()) {
-            writer.write(palabra + " | " + codigosHuffman.get(palabra) + "\n");
+            writer.write(String.format("%-7s", palabra) + " | " + codigosHuffman.get(palabra) + "\n");
         }
         writer.close();
 
-        regenerarArchivo("datos.txt", RUTA_BASE + longitudExtension + "_incisoE_regenerado.txt", codigosHuffman, longitudExtension);
+        regenerarArchivo("datos.txt", RUTA_BASE + longitudExtension + "_incisoE_regenerado.dat", codigosHuffman, longitudExtension);
     }
 
-    private static void calcularProbabilidades(String nombreArchivo, int tamanoPalabra, HashMap<String, Double> codigos) {
+    private static void calcularProbabilidades(String nombreArchivo, int tamanoPalabra, TreeMap<String, Double> codigos) {
         try {
             File archivo = new File(nombreArchivo);
             Reader reader = new FileReader(archivo);
@@ -60,14 +60,14 @@ public class SegundaParte {
             String palabra = "";
             int c;
 
-            while((c = reader.read()) != -1) {
+            while ((c = reader.read()) != -1) {
 
                 palabra += (char) c;
 
-                if(palabra.length() == tamanoPalabra) {
-                    if(codigos.containsKey(palabra)) {
+                if (palabra.length() == tamanoPalabra) {
+                    if (codigos.containsKey(palabra)) {
                         double aparicionesPalabra = codigos.get(palabra);
-                        codigos.put(palabra, (double) (aparicionesPalabra + 1));
+                        codigos.put(palabra, aparicionesPalabra + 1);
                     } else {
                         codigos.put(palabra, 1.0);
                     }
@@ -78,7 +78,7 @@ public class SegundaParte {
 
             reader.close();
 
-            for(String key : codigos.keySet()) {
+            for (String key : codigos.keySet()) {
                 codigos.put(key, codigos.get(key) / apariciones);
             }
 
@@ -91,7 +91,7 @@ public class SegundaParte {
     private static double calcularInformacion(double probabilidad) {
         double informacion = 0.0;
 
-        if(probabilidad != 0) {
+        if (probabilidad != 0) {
             informacion = -Math.log(probabilidad) / Math.log(Principal.CANT_SIMBOLOS);
         }
 
@@ -99,10 +99,10 @@ public class SegundaParte {
     }
 
     // Calcula la entropía de una fuente.
-    private static double calcularEntropiaFuente(HashMap<String, Double> codigos) {
+    private static double calcularEntropiaFuente(TreeMap<String, Double> codigos) {
         double entropia = 0.0;
 
-        for(String palabra : codigos.keySet()) {
+        for (String palabra : codigos.keySet()) {
             double probabilidad = codigos.get(palabra);
             entropia += probabilidad * calcularInformacion(probabilidad);
         }
@@ -111,35 +111,35 @@ public class SegundaParte {
     }
 
     // Muestra la informacion y la probabilidad de cada palabra.
-    private static void mostrarInformacion(File resultados, HashMap<String, Double> codigos) throws IOException {
+    private static void mostrarInformacion(File resultados, TreeMap<String, Double> codigos) throws IOException {
         Writer writer = new FileWriter(resultados);
 
         writer.write("Palabra | Probabilidad | Informacion\n");
 
-        for(String palabra : codigos.keySet()) {
+        for (String palabra : codigos.keySet()) {
             double probabilidad = codigos.get(palabra);
-            writer.write(palabra + ": " + probabilidad + " (" + calcularInformacion(probabilidad) + ")\n");
+            writer.write(String.format("%-8s", palabra) + ": " + String.format("%.11f", probabilidad) + " (" + String.format("%.13f", calcularInformacion(probabilidad)) + ")\n");
         }
 
         writer.write("Las palabras que no aparecen en el archivo tienen probabilidad 0.\n");
         writer.close();
     }
 
-    private static double calcularLongitudMedia(HashMap<String, Double> codigos) {
+    private static double calcularLongitudMedia(TreeMap<String, Double> codigos) {
         double longitudMedia = 0.0;
 
-        for(String palabra : codigos.keySet()) {
+        for (String palabra : codigos.keySet()) {
             longitudMedia += codigos.get(palabra) * palabra.length();
         }
 
         return longitudMedia;
     }
 
-    private static boolean esCodigoCompacto(HashMap<String, Double> codigos) {
+    private static boolean esCodigoCompacto(TreeMap<String, Double> codigos) {
         boolean esCompacto = true;
 
-        for(String palabra : codigos.keySet()) {
-            if(Math.abs(codigos.get(palabra) - Math.pow(Principal.CANT_SIMBOLOS, -palabra.length())) > 0.0001) {
+        for (String palabra : codigos.keySet()) {
+            if (Math.abs(codigos.get(palabra) - Math.pow(Principal.CANT_SIMBOLOS, -palabra.length())) > 0.0001) {
                 esCompacto = false;
                 break;
             }
@@ -156,35 +156,32 @@ public class SegundaParte {
         return (longitudMedia - entropia) / longitudMedia;
     }
 
-    private static boolean cumpleKraft(HashMap<String, Double> codigos) {
+    private static boolean cumpleKraft(TreeMap<String, Double> codigos) {
         double kraft = 0.0;
 
-        for(String palabra : codigos.keySet()) {
+        for (String palabra : codigos.keySet()) {
             kraft += Math.pow(Principal.CANT_SIMBOLOS, -palabra.length());
         }
 
         return kraft <= 1.0 + Principal.DIF;
     }
 
-    private static void regenerarArchivo(String nombreOriginal, String nombreRegenerado, HashMap<String, String> codigosHuffman, int tamanoPalabra) throws IOException {
+    private static void regenerarArchivo(String nombreOriginal, String nombreRegenerado, TreeMap<String, String> codigosHuffman, int tamanoPalabra) throws IOException {
         File archivo = new File(nombreOriginal);
         Reader reader = new FileReader(archivo);
 
         archivo = new File(nombreRegenerado);
-        BufferedWriter writer = new BufferedWriter(new FileWriter(archivo));
+        FileOutputStream writer = new FileOutputStream(archivo);
 
         int b = 0;
         int cantBit = 0;
         String palabra = "";
-        char c;
-        int cont = 0;
+        int c;
 
-        while((c = (char)reader.read()) != -1) {
-            palabra += c;
-            cont++;
+        while ((c = reader.read()) != -1) {
+            palabra += (char) c;
 
-            if (cont == tamanoPalabra) {
-                cont = 0;
+            if (palabra.length() == tamanoPalabra) {
                 String codigo = codigosHuffman.get(palabra);
                 for (int i = 0; i < codigo.length(); i++) {
                     b = b << 1;
@@ -196,7 +193,15 @@ public class SegundaParte {
                         cantBit = 0;
                     }
                 }
+                palabra = "";
             }
         }
+
+        if (cantBit != 0) {
+            b = b << (8 - cantBit);
+            writer.write(b);
+        }
+
+        writer.close();
     }
 }

@@ -1,10 +1,14 @@
-import java.io.*;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileWriter;
+import java.io.Writer;
 import java.util.Arrays;
 
 public class Principal {
     public static final int CANT_SIMBOLOS = 3;
     public static final int CANT_CARACTERES = 10000;
     public static final double DIF = 0.01;
+
     public static void main(String[] args) throws FileNotFoundException {
         File directorio = new File("./salidas");
         directorio.mkdir();
@@ -24,17 +28,17 @@ public class Principal {
         // PARTE 1
         double[] probabilidades = new double[CANT_SIMBOLOS];
         Arrays.fill(probabilidades, 0);
-        double[][] mat = new double[CANT_SIMBOLOS][CANT_SIMBOLOS];
-        for (int i = 0; i < CANT_SIMBOLOS; i++){
-            for (int j = 0; j < CANT_SIMBOLOS; j++){
-                mat[i][j] = 0;
+        double[][] matrizTransicion = new double[CANT_SIMBOLOS][CANT_SIMBOLOS];
+        for (int i = 0; i < CANT_SIMBOLOS; i++) {
+            for (int j = 0; j < CANT_SIMBOLOS; j++) {
+                matrizTransicion[i][j] = 0;
             }
         }
 
         try {
             // Inciso A
             Writer writer = new FileWriter(resultados);
-            PrimeraParte.leerArchivo(archivo, probabilidades, mat);
+            PrimeraParte.leerArchivo(archivo, probabilidades, matrizTransicion);
 
             writer.write("Probabilidades de cada simbolo: \n");
             for (int i = 0; i < CANT_SIMBOLOS; i++) {
@@ -44,13 +48,13 @@ public class Principal {
             writer.write("\nMatriz de transicion: \n");
             for (int i = 0; i < CANT_SIMBOLOS; i++) {
                 for (int j = 0; j < CANT_SIMBOLOS; j++) {
-                    writer.write(mat[i][j] + " ");
+                    writer.write(String.format("%.5f ", matrizTransicion[i][j]));
                 }
                 writer.write("\n");
             }
             writer.write("\n");
 
-            writer.write("La fuente es de memoria nula: " + (PrimeraParte.esMemoriaNula(probabilidades, mat) ? "SI" : "NO") + "\n");
+            writer.write("La fuente es de memoria nula: " + (PrimeraParte.esMemoriaNula(probabilidades, matrizTransicion) ? "SI" : "NO") + "\n");
 
             writer.close();
 
@@ -72,10 +76,12 @@ public class Principal {
             SegundaParte.procesarCodigo(3);
             SegundaParte.procesarCodigo(5);
             SegundaParte.procesarCodigo(7);
+
+            System.out.println("Programa ejecutado correctamente.");
+            System.out.println("Salidas generadas en la carpeta \"salidas\".");
         } catch (Exception e) {
             System.out.println("No se encontro el archivo");
+            e.printStackTrace();
         }
-
-
     }
 }
