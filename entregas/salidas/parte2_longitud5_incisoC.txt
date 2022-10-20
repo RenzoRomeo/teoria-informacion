@@ -1,0 +1,3 @@
+Cumple inecuaciones de Kraft y McMillan: SI
+Longitud media: 4.999999999999992
+Es codigo compacto: NO
