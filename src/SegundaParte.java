@@ -2,8 +2,6 @@ import java.io.*;
 import java.util.HashMap;
 
 public class SegundaParte {
-    private static int CANTIDAD_SIMBOLOS = 3;
-    private static double DIF = 0.01;
     private static String RUTA_BASE = "./salidas/parte2_longitud";
 
     public static void procesarCodigo(int longitudExtension) throws IOException {
@@ -140,7 +138,7 @@ public class SegundaParte {
         boolean esCompacto = true;
 
         for(String palabra : codigos.keySet()) {
-            if(Math.abs(codigos.get(palabra) - Math.pow(CANTIDAD_SIMBOLOS, -palabra.length())) > 0.0001) {
+            if(Math.abs(codigos.get(palabra) - Math.pow(Principal.CANT_SIMBOLOS, -palabra.length())) > 0.0001) {
                 esCompacto = false;
                 break;
             }
@@ -161,10 +159,10 @@ public class SegundaParte {
         double kraft = 0.0;
 
         for(String palabra : codigos.keySet()) {
-            kraft += Math.pow(CANTIDAD_SIMBOLOS, -palabra.length());
+            kraft += Math.pow(Principal.CANT_SIMBOLOS, -palabra.length());
         }
 
-        return kraft <= 1.0 + DIF;
+        return kraft <= 1.0 + Principal.DIF;
     }
 
     private static void regenerarArchivo(String nombreOriginal, String nombreRegenerado, HashMap<String, String> codigosHuffman, int tamanoPalabra) throws IOException {

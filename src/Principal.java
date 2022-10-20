@@ -4,7 +4,7 @@ import java.util.Arrays;
 
 public class Principal {
     public static final int CANT_SIMBOLOS = 3;
-    public static final int CANT_CARACTERES = 3;
+    public static final int CANT_CARACTERES = 10000;
     public static final double DIF = 0.01;
     public static void main(String[] args) throws FileNotFoundException {
 
