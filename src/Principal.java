@@ -1,7 +1,4 @@
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileWriter;
-import java.io.Writer;
+import java.io.*;
 import java.util.Arrays;
 
 public class Principal {
@@ -15,17 +12,24 @@ public class Principal {
         File archivo = new File("./datos.txt");
         File resultados = new File("./salidas/parte1_incisoA.txt");
 
-        // Verificar Flag -o
+        // Check if "-o" flag is present
+        boolean generarOrden20 = false;
+        for (String arg : args) {
+            if (arg.equals("-o")) {
+                generarOrden20 = true;
+                break;
+            }
+        }
 
         // PARTE 1
-            double[] probabilidades = new double[CANT_SIMBOLOS];
-            Arrays.fill(probabilidades, 0);
-            double[][] mat = new double[CANT_SIMBOLOS][CANT_SIMBOLOS];
-            for (int i = 0; i < CANT_SIMBOLOS; i++){
-                for (int j = 0; j < CANT_SIMBOLOS; j++){
-                    mat[i][j] = 0;
-                }
+        double[] probabilidades = new double[CANT_SIMBOLOS];
+        Arrays.fill(probabilidades, 0);
+        double[][] mat = new double[CANT_SIMBOLOS][CANT_SIMBOLOS];
+        for (int i = 0; i < CANT_SIMBOLOS; i++){
+            for (int j = 0; j < CANT_SIMBOLOS; j++){
+                mat[i][j] = 0;
             }
+        }
 
         try {
             // Inciso A
@@ -46,23 +50,28 @@ public class Principal {
             }
             writer.write("\n");
 
-            System.out.println("Es memoria nula? lo sabremos aqui -> " + PrimeraParte.esMemoriaNula(probabilidades, mat));
             writer.write("La fuente es de memoria nula: " + (PrimeraParte.esMemoriaNula(probabilidades, mat) ? "SI" : "NO") + "\n");
 
             writer.close();
 
             // Inciso B
-            resultados = new File("./salidas/parte1_incisoB.txt");
-            writer = new FileWriter(resultados);
 
             double entropia = PrimeraParte.calcularEntropia(probabilidades);
+
+            resultados = new File("./salidas/parte1_incisoB.txt");
+            writer = new FileWriter(resultados);
             writer.write("Entropia (Fuente Original): " + entropia + "\n");
-            writer.write("Entropia (Extension Orden 20, n * H(S)):)" + entropia * 20 + "\n");
-            writer.write("Entropia (Extension Orden 20, calculada por extension): " + PrimeraParte.entropiaExtension(probabilidades, 20) + "\n");
+            writer.write("Entropia (Extension Orden 20, n * H(S))): " + entropia * 20 + "\n");
+            if (generarOrden20) {
+                writer.write("Extension Orden 20: " + PrimeraParte.entropiaExtension(probabilidades, 20) + "\n");
+            }
 
             writer.close();
 
             // PARTE 2
+            SegundaParte.procesarCodigo(3);
+            SegundaParte.procesarCodigo(5);
+            SegundaParte.procesarCodigo(7);
         } catch (Exception e) {
             System.out.println("No se encontro el archivo");
         }
