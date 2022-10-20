@@ -2,8 +2,6 @@ import java.io.*;
 import java.util.HashMap;
 
 public class SegundaParte {
-    private static int CANTIDAD_SIMBOLOS = 3;
-    private static double DIF = 0.01;
     private static String RUTA_BASE = "./salidas/parte2_longitud";
 
     public static void procesarCodigo(int longitudExtension) throws IOException {
@@ -27,9 +25,9 @@ public class SegundaParte {
         double longitudMedia = calcularLongitudMedia(codigos);
 
         writer = new BufferedWriter(new FileWriter(archivo));
-        writer.write("Cumple inecuaciones de Kraft y McMillan: " + (cumpleKraft(codigos) ? "SI" : "NO"));
+        writer.write("Cumple inecuaciones de Kraft y McMillan: " + (cumpleKraft(codigos) ? "SI" : "NO") + "\n");
         writer.write("Longitud media: " + longitudMedia);
-        writer.write("Es codigo compacto: " + (esCodigoCompacto(codigos) ? "SI" : "NO"));
+        writer.write("Es codigo compacto: " + (esCodigoCompacto(codigos) ? "SI" : "NO") + "\n");
         writer.close();
 
         archivo = new File(RUTA_BASE + longitudExtension + "_incisoD.txt");
@@ -48,6 +46,8 @@ public class SegundaParte {
             writer.write(palabra + " | " + codigosHuffman.get(palabra) + "\n");
         }
         writer.close();
+
+        regenerarArchivo("datos.txt", RUTA_BASE + longitudExtension + "_incisoE_regenerado.txt", codigosHuffman, longitudExtension);
     }
 
     private static void calcularProbabilidades(String nombreArchivo, int tamanoPalabra, HashMap<String, Double> codigos) {
@@ -138,7 +138,7 @@ public class SegundaParte {
         boolean esCompacto = true;
 
         for(String palabra : codigos.keySet()) {
-            if(Math.abs(codigos.get(palabra) - Math.pow(CANTIDAD_SIMBOLOS, -palabra.length())) > 0.0001) {
+            if(Math.abs(codigos.get(palabra) - Math.pow(Principal.CANT_SIMBOLOS, -palabra.length())) > 0.0001) {
                 esCompacto = false;
                 break;
             }
@@ -159,13 +159,43 @@ public class SegundaParte {
         double kraft = 0.0;
 
         for(String palabra : codigos.keySet()) {
-            kraft += Math.pow(CANTIDAD_SIMBOLOS, -palabra.length());
+            kraft += Math.pow(Principal.CANT_SIMBOLOS, -palabra.length());
         }
 
-        return kraft <= 1.0 + DIF;
+        return kraft <= 1.0 + Principal.DIF;
     }
 
-    private static void regenerarArchivo(String nombreOriginal, String nombreRegenerado, HashMap<String, String> codigos) throws IOException {
+    private static void regenerarArchivo(String nombreOriginal, String nombreRegenerado, HashMap<String, String> codigosHuffman, int tamanoPalabra) throws IOException {
+        File archivo = new File(nombreOriginal);
+        Reader reader = new FileReader(archivo);
 
+        archivo = new File(nombreRegenerado);
+        BufferedWriter writer = new BufferedWriter(new FileWriter(archivo));
+
+        int b = 0;
+        int cantBit = 0;
+        String palabra = "";
+        char c;
+        int cont = 0;
+
+        while((c = (char)reader.read()) != -1) {
+            palabra += c;
+            cont++;
+
+            if (cont == tamanoPalabra) {
+                cont = 0;
+                String codigo = codigosHuffman.get(palabra);
+                for (int i = 0; i < codigo.length(); i++) {
+                    b = b << 1;
+                    b += codigo.charAt(i) - '0';
+                    cantBit++;
+                    if (cantBit == 8) {
+                        writer.write(b);
+                        b = 0;
+                        cantBit = 0;
+                    }
+                }
+            }
+        }
     }
 }
