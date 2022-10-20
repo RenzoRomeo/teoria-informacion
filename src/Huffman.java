@@ -45,10 +45,9 @@ public class Huffman {
             f.izq = a;
             f.der = b;
 
-            raiz = f;
-
             q.add(f);
         }
+        raiz = q.poll();
 
         guardarCodigo(raiz, "", codigoHuffman);
 
