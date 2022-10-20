@@ -1,3 +1,5 @@
+package codigo;
+
 import java.util.Comparator;
 import java.util.Map;
 import java.util.PriorityQueue;

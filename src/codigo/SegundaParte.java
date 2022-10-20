@@ -1,3 +1,5 @@
+package codigo;
+
 import java.io.*;
 import java.util.TreeMap;
 
@@ -40,7 +42,7 @@ public class SegundaParte {
 
         archivo = new File(RUTA_BASE + longitudExtension + "_incisoE.txt");
         writer = new BufferedWriter(new FileWriter(archivo));
-        writer.write("Codigo Huffman\n\n");
+        writer.write("Codigo codigo.Huffman\n\n");
         writer.write("Palabra | Codigo\n");
         for (String palabra : codigosHuffman.keySet()) {
             writer.write(String.format("%-7s", palabra) + " | " + codigosHuffman.get(palabra) + "\n");
