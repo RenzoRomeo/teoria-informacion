@@ -1,0 +1,10 @@
+Se partio desde la fuente de entrada y su probabilidad y la matriz del canal que muestra
+la probabilidad condicional de que se de B habiendose dado S. (por eso suman 1 las filas)
+
+Luego para la probabilidad del suceso simultaneo, se multiplica la matriz del canal por la respectiva
+probabilidad de la fuente de entrada es decir mat(Si, Bi) * p(Si). y eso forma la matriz del suceso 
+simultaneo.
+
+Luego se obtiene el vector de probabilidades de Bi sumando las columnas de la matriz de suceso simultaneo
+
+Luego para la probabilidad a posteriori
