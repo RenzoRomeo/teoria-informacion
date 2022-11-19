@@ -24,7 +24,10 @@ public class ParteUno {
                 }
                 cantTotal++;
             }
+            sc2.close();
         }
+
+        sc.close();
 
         for (String s : probabilidades.keySet()) {
             probabilidades.put(s, probabilidades.get(s) / cantTotal);
@@ -41,12 +44,9 @@ public class ParteUno {
      * bit[] con codigo
      * el ultimo byte se rellena con 0s
      */
-    public static void almacenarTabla(String nombreArchivo, TreeMap<String, String> huffman) throws IOException {
-        File archivo = new File(nombreArchivo);
-        FileOutputStream writer = new FileOutputStream(nombreArchivo);
-
+    public static void almacenarTabla(FileOutputStream writer, TreeMap<String, String> codigos) throws IOException {
         // Almacenar el tamaño de la tabla como 4 bytes
-        int tamanoTabla = huffman.size();
+        int tamanoTabla = codigos.size();
         writer.write((tamanoTabla >> 24) & 0xFF);
         writer.write((tamanoTabla >> 16) & 0xFF);
         writer.write((tamanoTabla >> 8) & 0xFF);
@@ -54,7 +54,7 @@ public class ParteUno {
 
         byte b = 0;
         int cantBits = 0;
-        for (Map.Entry<String, String> par : huffman.entrySet()) {
+        for (Map.Entry<String, String> par : codigos.entrySet()) {
             String palabra = par.getKey();
             String codigo = par.getValue();
             for (int i = 0; i < palabra.length(); i++) {
@@ -114,15 +114,10 @@ public class ParteUno {
             b = (byte) (b << (8 - cantBits));
             writer.write(b);
         }
-
-        writer.close();
     }
 
-    public static TreeMap<String, String> leerTabla(String nombreArchivo) throws IOException {
-        File archivo = new File(nombreArchivo);
-        FileInputStream reader = new FileInputStream(archivo);
-
-        TreeMap<String, String> huffman = new TreeMap<>();
+    public static TreeMap<String, String> leerTabla(FileInputStream reader) throws IOException {
+        TreeMap<String, String> codigos = new TreeMap<>();
         byte[] tamanoTablaBytes = reader.readNBytes(4);
 
         int tamanoTabla = 0;
@@ -131,7 +126,7 @@ public class ParteUno {
             tamanoTabla = tamanoTabla | (tamanoTablaBytes[i] & 0xFF);
         }
 
-        byte b = 1;
+        byte b = 0;
         int cantBits = 0;
 
         for (int i = 0; i < tamanoTabla; i++) {
@@ -178,10 +173,81 @@ public class ParteUno {
                 b = (byte) (b << 1);
                 cantBits--;
             }
-            huffman.put(palabra, codigo);
+            codigos.put(palabra, codigo);
         }
 
+        return codigos;
+    }
+
+    public static void comprimir(String nombreArchivo, String nombreArchivoSalida, TreeMap<String, String> codigos) throws IOException {
+        File archivo = new File(nombreArchivo);
+        Scanner sc = new Scanner(archivo);
+        FileOutputStream writer = new FileOutputStream(nombreArchivoSalida);
+
+        almacenarTabla(writer, codigos);
+
+        byte b = 0;
+        int cantBits = 0;
+        while (sc.hasNextLine()) {
+            Scanner sc2 = new Scanner(sc.nextLine());
+            while (sc2.hasNext()) {
+                String palabra = sc2.next();
+                String codigo = codigos.get(palabra);
+                for (int i = 0; i < codigo.length(); i++) {
+                    b = (byte) (b << 1);
+                    if (codigo.charAt(i) == '1') {
+                        b = (byte) (b | 1);
+                    }
+                    cantBits++;
+                    if (cantBits == 8) {
+                        writer.write(b);
+                        b = 0;
+                        cantBits = 0;
+                    }
+                }
+            }
+            sc2.close();
+        }
+
+        if (cantBits != 0) {
+            b = (byte) (b << (8 - cantBits));
+            writer.write(b);
+        }
+
+        sc.close();
+        writer.close();
+    }
+
+    public static void descomprimir(String nombreComprimido, String nombreDescomprimido) throws IOException {
+        FileInputStream reader = new FileInputStream(nombreComprimido);
+        TreeMap<String, String> codigos = leerTabla(reader);
+
+        FileOutputStream writer = new FileOutputStream(nombreDescomprimido);
+
+        byte b = 0;
+        int cantBits = 0;
+        String codigo = "";
+        while (reader.available() > 0) {
+            if (cantBits == 0) {
+                cantBits = 8;
+                b = reader.readNBytes(1)[0];
+            }
+
+            codigo += (b & 0x80) == 0 ? '0' : '1';
+            b = (byte) (b << 1);
+            cantBits--;
+
+            for (Map.Entry<String, String> entry : codigos.entrySet()) {
+                if (entry.getValue().equals(codigo)) {
+                    writer.write(entry.getKey().getBytes());
+                    writer.write(' ');
+                    codigo = "";
+                    break;
+                }
+            }
+        }
+
+        writer.close();
         reader.close();
-        return huffman;
     }
 }
