@@ -7,6 +7,7 @@ import java.util.TreeMap;
 
 public class Huffman {
 
+    private static String separador = "***";
     private static class NodoHuffman {
         public double probabilidad;
         public String palabra;
@@ -40,7 +41,7 @@ public class Huffman {
             NodoHuffman a = q.poll();
             NodoHuffman b = q.poll();
 
-            NodoHuffman f = new NodoHuffman("-", a.probabilidad + b.probabilidad);
+            NodoHuffman f = new NodoHuffman(separador, a.probabilidad + b.probabilidad);
             f.izq = a;
             f.der = b;
 
@@ -54,7 +55,7 @@ public class Huffman {
     }
 
     private static void guardarCodigo(NodoHuffman raiz, String s, TreeMap<String, String> codigoHuffman) {
-        if (raiz.izq == null && raiz.der == null && !raiz.palabra.equalsIgnoreCase("-")) {
+        if (raiz.izq == null && raiz.der == null && !raiz.palabra.equalsIgnoreCase(separador)) {
             codigoHuffman.put(raiz.palabra, s);
         } else {
             guardarCodigo(raiz.izq, s + "0", codigoHuffman);
