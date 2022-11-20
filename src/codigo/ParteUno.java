@@ -17,7 +17,7 @@ public class ParteUno {
         while (sc.hasNextLine()) {
             Scanner sc2 = new Scanner(sc.nextLine());
             while (sc2.hasNext()) {
-                String s = normalizar(sc2.next());
+                String s = sc2.next();
                 if (probabilidades.containsKey(s)) {
                     probabilidades.put(s, probabilidades.get(s) + 1.0);
                 } else {
@@ -56,14 +56,16 @@ public class ParteUno {
         byte b = 0;
         int cantBits = 0;
         for (Map.Entry<String, String> par : codigos.entrySet()) {
-            String palabra = par.getKey();
+//            String palabra = par.getKey();
+            byte[] palabraBytes = par.getKey().getBytes();
             String codigo = par.getValue();
-            for (int i = 0; i < palabra.length(); i++) {
-                char c = palabra.charAt(i);
+            for (int i = 0; i < palabraBytes.length; i++) {
+//                char c = palabra.charAt(i);
+                byte c = palabraBytes[i];
                 for (int j = 0; j < 8; j++) {
                     b = (byte) (b << 1);
                     b = (byte) (b | ((c & 0x80) >> 7)); // 0x80 = 1000 0000
-                    c = (char) (c << 1);
+                    c = (byte) (c << 1);
                     cantBits++;
                     if (cantBits == 8) {
                         writer.write(b);
@@ -132,8 +134,10 @@ public class ParteUno {
 
         for (int i = 0; i < tamanoTabla; i++) {
             String palabra = "";
+            byte[] palabraBytes = new byte[50];
+            int indice = 0;
 
-            char c;
+            byte c;
             do {
                 c = 0;
                 for (int j = 0; j < 8; j++) {
@@ -141,15 +145,18 @@ public class ParteUno {
                         cantBits = 8;
                         b = reader.readNBytes(1)[0];
                     }
-                    c = (char) (c << 1);
-                    c = (char) (c | ((b & 0x80) >> 7));
+                    c = (byte) (c << 1);
+                    c = (byte) (c | ((b & 0x80) >> 7));
                     b = (byte) (b << 1);
                     cantBits--;
                 }
                 if (c != 0) {
-                    palabra += c;
+                    palabraBytes[indice] = c;
+                    indice++;
+//                    palabra += c;
                 }
             } while (c != 0);
+            palabra = new String(palabraBytes, 0, indice);
 
             byte logitudCodigo = 0;
             for (int j = 0; j < 8; j++) {
@@ -192,7 +199,7 @@ public class ParteUno {
         while (sc.hasNextLine()) {
             Scanner sc2 = new Scanner(sc.nextLine());
             while (sc2.hasNext()) {
-                String palabra = normalizar(sc2.next());
+                String palabra = sc2.next();
                 String codigo = codigos.get(palabra);
                 for (int i = 0; i < codigo.length(); i++) {
                     b = (byte) (b << 1);
