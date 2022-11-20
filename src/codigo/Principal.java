@@ -7,8 +7,13 @@ public class Principal {
     public static void main(String[] args) throws IOException {
         TreeMap<String, Double> probabilidades = ParteUno.leerArchivo("datos.txt");
 
-        TreeMap<String, String> codigos = Huffman.huffman(probabilidades);
-        ParteUno.comprimir("datos.txt", "comprimido.huff", codigos);
-        ParteUno.descomprimir("comprimido.huff", "descomprimido.txt");
+        TreeMap<String, String> codigosHuffman = Huffman.huffman(probabilidades);
+        TreeMap<String, String> codigosShannon = ShannonFano.shannonFano(probabilidades);
+
+        ParteUno.comprimir("datos.txt", "comprimido.huff", codigosHuffman);
+        ParteUno.comprimir("datos.txt", "comprimido.shan", codigosShannon);
+
+        ParteUno.descomprimir("comprimido.huff", "descomprimidoHuffman.txt");
+        ParteUno.descomprimir("comprimido.shan", "descomprimidoShannon.txt");
     }
 }
