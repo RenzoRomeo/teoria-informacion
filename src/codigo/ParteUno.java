@@ -1,7 +1,6 @@
 package codigo;
 
 import java.io.*;
-import java.text.Normalizer;
 import java.util.Map;
 import java.util.Scanner;
 import java.util.TreeMap;
@@ -257,12 +256,5 @@ public class ParteUno {
 
         writer.close();
         reader.close();
-    }
-
-
-    public static String normalizar(String texto) {
-        texto = Normalizer.normalize(texto, Normalizer.Form.NFD);
-        texto = texto.replaceAll("[\\p{InCombiningDiacriticalMarks}]", "");
-        return texto;
     }
 }
