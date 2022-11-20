@@ -25,12 +25,12 @@ public class Huffman {
         }
     }
 
-    public static TreeMap<String, String> huffman(TreeMap<String, Double> codigos) {
+    public static TreeMap<String, String> huffman(TreeMap<String, Double> probabilidades) {
         TreeMap<String, String> codigoHuffman = new TreeMap<>();
 
-        PriorityQueue<NodoHuffman> q = new PriorityQueue<>(codigos.size(), new Comparador());
+        PriorityQueue<NodoHuffman> q = new PriorityQueue<>(probabilidades.size(), new Comparador());
 
-        for (Map.Entry<String, Double> par : codigos.entrySet()) {
+        for (Map.Entry<String, Double> par : probabilidades.entrySet()) {
             NodoHuffman nodo = new NodoHuffman(par.getKey(), par.getValue());
             nodo.izq = null;
             nodo.der = null;
