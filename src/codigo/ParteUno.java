@@ -1,6 +1,7 @@
 package codigo;
 
 import java.io.*;
+import java.text.Normalizer;
 import java.util.Map;
 import java.util.Scanner;
 import java.util.TreeMap;
@@ -16,7 +17,7 @@ public class ParteUno {
         while (sc.hasNextLine()) {
             Scanner sc2 = new Scanner(sc.nextLine());
             while (sc2.hasNext()) {
-                String s = sc2.next();
+                String s = normalizar(sc2.next());
                 if (probabilidades.containsKey(s)) {
                     probabilidades.put(s, probabilidades.get(s) + 1.0);
                 } else {
@@ -191,7 +192,7 @@ public class ParteUno {
         while (sc.hasNextLine()) {
             Scanner sc2 = new Scanner(sc.nextLine());
             while (sc2.hasNext()) {
-                String palabra = sc2.next();
+                String palabra = normalizar(sc2.next());
                 String codigo = codigos.get(palabra);
                 for (int i = 0; i < codigo.length(); i++) {
                     b = (byte) (b << 1);
@@ -249,5 +250,12 @@ public class ParteUno {
 
         writer.close();
         reader.close();
+    }
+
+
+    public static String normalizar(String texto) {
+        texto = Normalizer.normalize(texto, Normalizer.Form.NFD);
+        texto = texto.replaceAll("[\\p{InCombiningDiacriticalMarks}]", "");
+        return texto;
     }
 }
