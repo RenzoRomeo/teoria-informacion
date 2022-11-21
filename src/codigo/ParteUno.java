@@ -180,7 +180,7 @@ public class ParteUno {
                 b = (byte) (b << 1);
                 cantBits--;
             }
-            codigos.put(palabra, codigo);
+            codigos.put(codigo, palabra);
         }
 
         return codigos;
@@ -189,7 +189,7 @@ public class ParteUno {
     public static void comprimir(String nombreArchivo, String nombreArchivoSalida, TreeMap<String, String> codigos) throws IOException {
         File archivo = new File(nombreArchivo);
         Scanner sc = new Scanner(archivo);
-        FileOutputStream writer = new FileOutputStream(nombreArchivoSalida);
+        FileOutputStream writer = new FileOutputStream("salidas/" + nombreArchivoSalida);
 
         almacenarTabla(writer, codigos);
 
@@ -226,10 +226,10 @@ public class ParteUno {
     }
 
     public static void descomprimir(String nombreComprimido, String nombreDescomprimido) throws IOException {
-        FileInputStream reader = new FileInputStream(nombreComprimido);
+        FileInputStream reader = new FileInputStream("salidas/" + nombreComprimido);
         TreeMap<String, String> codigos = leerTabla(reader);
 
-        FileOutputStream writer = new FileOutputStream(nombreDescomprimido);
+        FileOutputStream writer = new FileOutputStream("salidas/" + nombreDescomprimido);
 
         byte b = 0;
         int cantBits = 0;
@@ -244,17 +244,97 @@ public class ParteUno {
             b = (byte) (b << 1);
             cantBits--;
 
-            for (Map.Entry<String, String> entry : codigos.entrySet()) {
-                if (entry.getValue().equals(codigo)) {
-                    writer.write(entry.getKey().getBytes());
-                    writer.write(' ');
-                    codigo = "";
-                    break;
-                }
+            if (codigos.containsKey(codigo)) {
+                String palabra = codigos.get(codigo);
+                writer.write(palabra.getBytes());
+                writer.write(' ');
+                codigo = "";
             }
         }
 
         writer.close();
         reader.close();
+    }
+
+    public static TreeMap<String, Double> probabilidadesCodigos(TreeMap<String, Double> probabilidadesOriginales, TreeMap<String, String> codigos) {
+        TreeMap<String, Double> probabilidadesCodigos = new TreeMap<>();
+        for (Map.Entry<String, String> entry : codigos.entrySet()) {
+            probabilidadesCodigos.put(entry.getValue(), probabilidadesOriginales.get(entry.getKey()));
+        }
+
+        return probabilidadesCodigos;
+    }
+
+    public static void propiedades(String nombreArchivo, TreeMap<String, Double> probabilidades, int cantSimbolos) {
+        double entropia = calcularEntropiaFuente(probabilidades, cantSimbolos);
+        double longitudMedia = calcularLongitudMedia(probabilidades);
+        double rendimiento = calcularRendimiento(entropia, longitudMedia);
+        double redundancia = calcularRedundancia(entropia, longitudMedia);
+
+        BufferedWriter writer = null;
+        try {
+            writer = new BufferedWriter(new FileWriter("salidas/" + nombreArchivo));
+            writer.write("Entropia: " + entropia);
+            writer.newLine();
+            writer.write("Longitud media: " + longitudMedia);
+            writer.newLine();
+            writer.write("Rendimiento: " + rendimiento);
+            writer.newLine();
+            writer.write("Redundancia: " + redundancia);
+            writer.newLine();
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        } finally {
+            try {
+                writer.close();
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            }
+        }
+    }
+
+    private static double calcularInformacion(double probabilidad, int cantSimbolos) {
+        double informacion = 0.0;
+
+        if (probabilidad != 0) {
+            informacion = -Math.log(probabilidad) / Math.log(cantSimbolos);
+        }
+
+        return informacion;
+    }
+
+    private static double calcularEntropiaFuente(TreeMap<String, Double> probabilidades, int cantSimbolos) {
+        double entropia = 0.0;
+
+        for (String palabra : probabilidades.keySet()) {
+            double probabilidad = probabilidades.get(palabra);
+            entropia += probabilidad * calcularInformacion(probabilidad, cantSimbolos);
+        }
+
+        return entropia;
+    }
+
+    private static double calcularLongitudMedia(TreeMap<String, Double> probabilidades) {
+        double longitudMedia = 0.0;
+
+        for (String palabra : probabilidades.keySet()) {
+            int longitud = 0;
+            for (int i = 0; i < palabra.length(); i++) {
+                if (palabra.charAt(i) < 256) {
+                    longitud++;
+                }
+            }
+            longitudMedia += probabilidades.get(palabra) * longitud;
+        }
+
+        return longitudMedia;
+    }
+
+    private static double calcularRendimiento(double entropia, double lontiudMedia) {
+        return entropia / lontiudMedia;
+    }
+
+    private static double calcularRedundancia(double entropia, double longitudMedia) {
+        return (longitudMedia - entropia) / longitudMedia;
     }
 }
