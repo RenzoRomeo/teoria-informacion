@@ -180,7 +180,7 @@ public class ParteUno {
                 b = (byte) (b << 1);
                 cantBits--;
             }
-            codigos.put(palabra, codigo);
+            codigos.put(codigo, palabra);
         }
 
         return codigos;
@@ -244,13 +244,11 @@ public class ParteUno {
             b = (byte) (b << 1);
             cantBits--;
 
-            for (Map.Entry<String, String> entry : codigos.entrySet()) {
-                if (entry.getValue().equals(codigo)) {
-                    writer.write(entry.getKey().getBytes());
-                    writer.write(' ');
-                    codigo = "";
-                    break;
-                }
+            if (codigos.containsKey(codigo)) {
+                String palabra = codigos.get(codigo);
+                writer.write(palabra.getBytes());
+                writer.write(' ');
+                codigo = "";
             }
         }
 
