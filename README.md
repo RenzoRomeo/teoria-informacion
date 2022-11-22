@@ -10,7 +10,4 @@ Repositorio para Teoría de la Información
 Para ejecutar el programa:
 
 ```bash
-java -jar ejecutable.jar [-o]
-```
-
--o: se genera la extension de orden 20 y se calcula su entropia. 
+java -jar ejecutable.jar
