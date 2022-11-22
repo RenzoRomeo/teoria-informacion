@@ -234,7 +234,7 @@ public class ParteUno {
         byte b = 0;
         int cantBits = 0;
         String codigo = "";
-        while (reader.available() > 0) {
+        while (reader.available() > 0 || cantBits != 0) {
             if (cantBits == 0) {
                 cantBits = 8;
                 b = reader.readNBytes(1)[0];
