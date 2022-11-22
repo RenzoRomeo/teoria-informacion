@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="Ejecutable">
+    <output-path>$PROJECT_DIR$/entregas</output-path>
+    <root id="archive" name="java.jar">
+      <element id="module-output" name="java" />
+    </root>
+  </artifact>
+</component>
