@@ -1,2 +1,0 @@
-Rendimiento: 0.86582
-Redundancia: 0.13418

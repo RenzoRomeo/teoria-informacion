@@ -1,5 +1,3 @@
 *.exe
-*.txt
 !datos.txt
 *.dat
-salidas

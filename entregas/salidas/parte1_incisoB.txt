@@ -1,3 +1,0 @@
-Entropia (Fuente Original): 0.9570874538998759
-Entropia (Extension Orden 20, n * H(S))): 19.141749077997517
-Extension Orden 20: 19.141748982735436
